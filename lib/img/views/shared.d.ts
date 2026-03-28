@@ -1,0 +1,10 @@
+export declare const ELEMENT_COLORS: Record<string, string>;
+export declare const STAR_COLORS: Record<number, string>;
+export declare const RARITY_COLORS: Record<number, string>;
+export declare const CONS_COLORS: Record<number, string>;
+export declare const CONS_SUFFIX: Record<string, string>;
+export declare const GAME_ACCENT: Record<string, string>;
+export declare const DARK_BG = "linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)";
+export declare const FONT_FAMILY = "\"tttgbnumber\", \"PingFang SC\", system-ui, sans-serif";
+export declare function formatDate(): string;
+export declare function formatDateZh(): string;
