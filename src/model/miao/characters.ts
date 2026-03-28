@@ -55,7 +55,7 @@ export const GS_CHARACTERS: Record<number, CharacterMeta> = {
   10000052: { name: '珊瑚宫心海', abbr: '心海', element: '水', rarity: 5, weaponType: '法器' },
   10000053: { name: '五郎', abbr: '五郎', element: '岩', rarity: 4, weaponType: '弓' },
   10000054: { name: '九条裟罗', abbr: '九条', element: '雷', rarity: 4, weaponType: '弓' },
-  10000055: { name: '荒�的�的泷', abbr: '荒泷', element: '岩', rarity: 5, weaponType: '双手剑' },
+  10000055: { name: '荒泷一斗', abbr: '荒泷', element: '岩', rarity: 5, weaponType: '双手剑' },
   10000056: { name: '久岐忍', abbr: '忍', element: '雷', rarity: 4, weaponType: '单手剑' },
   10000057: { name: '鹿野院平藏', abbr: '平藏', element: '风', rarity: 4, weaponType: '法器' },
   10000058: { name: '八重神子', abbr: '八重', element: '雷', rarity: 5, weaponType: '法器' },

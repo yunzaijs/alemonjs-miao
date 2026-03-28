@@ -1,8 +1,6 @@
 /// <reference types="lvyjs/env" />
 /// <reference types="alemonjs/env" />
 
-import 'alemonjs';
-
 declare module '*.png' {
   const src: string;
   export default src;

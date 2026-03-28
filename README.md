@@ -63,6 +63,8 @@ apps:
 
 ## 引用
 
-|                           Nickname                           | Contribution   |
-| :----------------------------------------------------------: | -------------- |
-| [miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin) | 源码与素材借鉴 |
+|                           Nickname                           | Contribution           |
+| :----------------------------------------------------------: | ---------------------- |
+| [miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin) | 源码与素材借鉴         |
+|                         Enka.Network                         | Enka面板服务           |
+|                          Snap.Hutao                          | DGP Studio 的 胡桃 API |

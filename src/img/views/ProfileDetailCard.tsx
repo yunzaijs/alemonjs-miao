@@ -1,6 +1,7 @@
 /**
  * 600px 宽度，深色背景，角色 splash art，属性面板，天赋，命座，武器，圣遗物
  */
+import { scoreArtifact, scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ArtifactData, ProfileAvatar, StatEntry, TalentData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
@@ -196,8 +197,9 @@ function WeaponSection({ weapon }: { weapon: NonNullable<ProfileAvatar['weapon']
 
 // ─── 圣遗物/遗器 ────────────────────────────────────
 
-function ArtifactItem({ art }: { art: ArtifactData }) {
+function ArtifactItem({ art, charName }: { art: ArtifactData; charName: string }) {
   const starColor = STAR_COLOR[art.rarity] ?? STAR_COLOR[5];
+  const score = scoreArtifact(art, charName);
 
   return (
     <div
@@ -235,7 +237,21 @@ function ArtifactItem({ art }: { art: ArtifactData }) {
           >
             {art.name}
           </span>
-          <span style={{ fontSize: '11px', color: '#888' }}>+{art.level}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 'bold',
+                color: score.grade.color,
+                background: 'rgba(0,0,0,0.3)',
+                borderRadius: '3px',
+                padding: '0 4px'
+              }}
+            >
+              {score.mark} {score.grade.grade}
+            </span>
+            <span style={{ fontSize: '11px', color: '#888' }}>+{art.level}</span>
+          </div>
         </div>
         <div style={{ fontSize: '12px', color: '#e8d5b0', marginTop: '2px' }}>
           {art.mainName} {art.mainValue}
@@ -424,14 +440,60 @@ export default function ProfileDetailCard({ data }: Props) {
         )}
 
         {/* ── 圣遗物/遗器 ── */}
-        {avatar.artifacts && avatar.artifacts.length > 0 && (
-          <div style={{ padding: '0 24px 14px' }}>
-            <SectionTitle title={game === 'sr' ? '遗器' : '圣遗物'} />
-            {avatar.artifacts.map(art => (
-              <ArtifactItem key={art.pos} art={art} />
-            ))}
-          </div>
-        )}
+        {avatar.artifacts &&
+          avatar.artifacts.length > 0 &&
+          (() => {
+            const totalScore = scoreCharacterArtifacts(avatar);
+
+            return (
+              <div style={{ padding: '0 24px 14px' }}>
+                <SectionTitle title={game === 'sr' ? '遗器' : '圣遗物'} />
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 14px',
+                    background: 'rgba(0,0,0,0.25)',
+                    borderRadius: '6px',
+                    marginBottom: '8px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', color: '#aaa' }}>总评分</span>
+                    <span
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        color: totalScore.grade.color
+                      }}
+                    >
+                      {totalScore.totalMark}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', color: '#aaa' }}>平均</span>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{totalScore.avgMark}</span>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 'bold',
+                        color: totalScore.grade.color,
+                        background: 'rgba(0,0,0,0.3)',
+                        borderRadius: '4px',
+                        padding: '2px 8px'
+                      }}
+                    >
+                      {totalScore.grade.grade}
+                    </span>
+                  </div>
+                </div>
+                {avatar.artifacts.map(art => (
+                  <ArtifactItem key={art.pos} art={art} charName={avatar.name} />
+                ))}
+              </div>
+            );
+          })()}
 
         {/* ── 底部 ── */}
         <div
