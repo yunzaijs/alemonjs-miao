@@ -1,9 +1,13 @@
 /// <reference types="lvyjs/env" />
 /// <reference types="alemonjs/env" />
 
-import type { EventsEnum } from 'alemonjs';
+import 'alemonjs';
 
 declare module '*.png' {
+  const src: string;
+  export default src;
+}
+declare module '*.webp' {
   const src: string;
   export default src;
 }
@@ -18,13 +22,4 @@ declare module '*.ttf' {
 declare module '*.md' {
   const url: string;
   export default url;
-}
-
-declare module 'alemonjs' {
-  // 扩展原有的联合类型
-  export type EventsEnum = EventsEnum & {
-    miao?: {
-      game: 'gs' | 'sr' | 'zzz';
-    };
-  };
 }

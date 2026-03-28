@@ -33,7 +33,7 @@ export default async (e: EventsEnum) => {
   }
 
   // 解析角色名：匹配 #XXX详情 / #XXX面板详情 / #XXX伤害
-  const nameMatch = text.match(/^(?:!|！|\/|#|＃)*(.{1,10})\s*(?:详细|详情|面板详情|伤害)/);
+  const nameMatch = text.match(/^(?:!|！|\/|#|＃)*(.{1,10})\s*(?:详细|详情|面板|面板详情|伤害)/);
   const charName = nameMatch?.[1]?.trim();
 
   if (!charName) {

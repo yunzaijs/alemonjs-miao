@@ -5,6 +5,7 @@
  *
  * 一比一复刻 miao-plugin 面板数据结构
  */
+import { getCharacterFace } from '@src/assets/character/index.js';
 import { FIGHT_PROP_MAP, getCharacterMeta } from './characters';
 
 // ─── 圣遗物/遗器子属性 ──────────────────────────────
@@ -294,8 +295,8 @@ export async function fetchEnkaGS(uid: string): Promise<ProfileData | null> {
         level,
         cons: consCount,
         fetter,
-        icon: `https://enka.network/ui/UI_AvatarIcon_Side_${avatarId}.png`,
-        sideIcon: `https://enka.network/ui/UI_AvatarIcon_Side_${avatarId}.png`,
+        icon: getCharacterFace('gs', meta.name) ?? `https://enka.network/ui/UI_AvatarIcon_Side_${avatarId}.png`,
+        sideIcon: getCharacterFace('gs', meta.name) ?? `https://enka.network/ui/UI_AvatarIcon_Side_${avatarId}.png`,
         weapon,
         talent,
         stats,
@@ -450,8 +451,8 @@ export async function fetchMihomoSR(uid: string): Promise<ProfileData | null> {
         level: ch.level ?? 0,
         cons: ch.rank ?? 0,
         fetter: 0,
-        icon: ch.icon ?? '',
-        sideIcon: ch.icon ?? '',
+        icon: getCharacterFace('sr', chName) ?? ch.icon ?? '',
+        sideIcon: getCharacterFace('sr', chName) ?? ch.icon ?? '',
         weapon,
         talent,
         stats: stats.length > 0 ? stats : undefined,
