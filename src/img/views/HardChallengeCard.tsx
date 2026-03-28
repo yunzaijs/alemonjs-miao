@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
+import { FONT_FAMILY, RARITY_COLORS, formatDate } from './shared.js';
 
 // ─── 类型定义 ────────────────────────────────────────
 
@@ -72,12 +73,6 @@ const DIFFICULTY_ROMAN: Record<number, string> = {
   6: 'VI'
 };
 
-const RARITY_COLORS: Record<number, string> = {
-  5: '#c6923a',
-  4: '#a256e1',
-  3: '#5180cb'
-};
-
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -100,8 +95,7 @@ function formatDps(dps: number): string {
 // ─── 主组件 ──────────────────────────────────────────
 
 export default function HardChallengeCard({ data }: { data: HardChallengeData }) {
-  const now = new Date();
-  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const dateStr = formatDate();
 
   const diff = data.best?.difficulty ?? 0;
   const diffLabel = diff > 0 ? `${DIFFICULTY_ROMAN[diff] ?? diff} · ${DIFFICULTY_NAMES[diff] ?? '未知'}` : '未挑战';
@@ -112,7 +106,7 @@ export default function HardChallengeCard({ data }: { data: HardChallengeData })
         style={{
           padding: '24px',
           background: 'linear-gradient(180deg, #1a1520 0%, #2d2435 40%)',
-          fontFamily: '"tttgbnumber", system-ui, sans-serif',
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#e8e0f0'
         }}

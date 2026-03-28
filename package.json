@@ -27,7 +27,7 @@
     "jsxp": "^1.3.0"
   },
   "devDependencies": {
-    "alemonjs-mhy": "^1.0.0-rc.1",
+    "alemonjs-mhy": "^1.0.0-rc.2",
     "@alemonjs/bubble": "^2.1.4",
     "@alemonjs/db": "^0.0.13",
     "@alemonjs/discord": "^2.1.7",

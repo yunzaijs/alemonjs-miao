@@ -1,12 +1,7 @@
 import type { CalendarActivity, CalendarData } from '@src/model/miao/calendar.js';
 import React from 'react';
 import HTML from './HTML.js';
-
-const GAME_ACCENT: Record<string, string> = {
-  gs: '#e8d5b0',
-  sr: '#c5b4e3',
-  zzz: '#b4e3c5'
-};
+import { DARK_BG, FONT_FAMILY, GAME_ACCENT } from './shared.js';
 
 const TYPE_ICONS: Record<string, string> = {
   character: '🎭',
@@ -89,8 +84,8 @@ export default function CalendarCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '300px'

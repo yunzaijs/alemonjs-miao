@@ -5,37 +5,7 @@ import { scoreArtifact, scoreCharacterArtifacts } from '@src/model/miao/artisMar
 import type { ArtifactData, ProfileAvatar, StatEntry, TalentData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-
-// ─── 颜色常量 ────────────────────────────────────────
-
-const ELEMENT_COLORS: Record<string, string> = {
-  火: '#ef5350',
-  水: '#42a5f5',
-  风: '#66bb6a',
-  雷: '#ab47bc',
-  草: '#8bc34a',
-  冰: '#29b6f6',
-  岩: '#ffa726',
-  物理: '#9e9e9e',
-  量子: '#7e57c2',
-  虚数: '#fdd835'
-};
-
-const STAR_COLOR: Record<number, string> = {
-  5: '#ce8d54',
-  4: '#a0a0e8',
-  3: '#6ba8e8'
-};
-
-const CONS_COLORS: Record<number, string> = {
-  0: '#8e8e8e',
-  1: '#5d9e5e',
-  2: '#5c85c1',
-  3: '#7267b0',
-  4: '#a85fa5',
-  5: '#c2733a',
-  6: '#d4a574'
-};
+import { CONS_COLORS, DARK_BG, ELEMENT_COLORS, FONT_FAMILY, formatDateZh, STAR_COLORS } from './shared.js';
 
 // ─── 属性行 ──────────────────────────────────────────
 
@@ -50,7 +20,7 @@ function AttrRow({ stat, idx }: { stat: StatEntry; idx: number }) {
         alignItems: 'center',
         padding: '7px 14px',
         background: bgColor,
-        borderRadius: '4px',
+        borderRadius: '6px',
         marginBottom: '2px'
       }}
     >
@@ -156,7 +126,7 @@ function ConsRow({ cons }: { cons: number }) {
 // ─── 武器/光锥 ──────────────────────────────────────
 
 function WeaponSection({ weapon }: { weapon: NonNullable<ProfileAvatar['weapon']>; game: string }) {
-  const starColor = STAR_COLOR[weapon.rarity] ?? STAR_COLOR[4];
+  const starColor = STAR_COLORS[weapon.rarity] ?? STAR_COLORS[4];
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -198,7 +168,7 @@ function WeaponSection({ weapon }: { weapon: NonNullable<ProfileAvatar['weapon']
 // ─── 圣遗物/遗器 ────────────────────────────────────
 
 function ArtifactItem({ art, charName }: { art: ArtifactData; charName: string }) {
-  const starColor = STAR_COLOR[art.rarity] ?? STAR_COLOR[5];
+  const starColor = STAR_COLORS[art.rarity] ?? STAR_COLORS[5];
   const score = scoreArtifact(art, charName);
 
   return (
@@ -320,7 +290,7 @@ interface Props {
 export default function ProfileDetailCard({ data }: Props) {
   const { avatar, game, uid } = data;
   const elemColor = ELEMENT_COLORS[avatar.element] ?? '#888';
-  const starColor = STAR_COLOR[avatar.rarity] ?? STAR_COLOR[5];
+  const starColor = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[5];
   const consLabel = game === 'sr' ? '星魂' : '命座';
 
   return (
@@ -328,8 +298,8 @@ export default function ProfileDetailCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '400px'
@@ -507,7 +477,7 @@ export default function ProfileDetailCard({ data }: Props) {
           }}
         >
           <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</span>
+          <span>{formatDateZh()}</span>
         </div>
       </div>
     </HTML>

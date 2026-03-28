@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
+import { FONT_FAMILY } from './shared.js';
 
 const STYLE = {
   fontColor: '#ceb78b',
@@ -174,7 +175,7 @@ export default function MiaoHelp() {
       <div
         style={{
           padding: '0',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          fontFamily: FONT_FAMILY,
           color: '#fff',
           minHeight: '400px',
           background: '#0a1628'

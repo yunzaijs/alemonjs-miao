@@ -913,10 +913,10 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-alemonjs-mhy@^1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.npmmirror.com/alemonjs-mhy/-/alemonjs-mhy-1.0.0-rc.1.tgz#8d31d29637d90bb5792c5e36656738161c9098c7"
-  integrity sha512-07aLJZRSF0jqYbDECE/8TDAtZC9gbTbALvO3cL7FSAClo0kOuTePoZT/uvAYKCKVndj8DVDCCOPl6ejIFDGA4g==
+alemonjs-mhy@^1.0.0-rc.2:
+  version "1.0.0-rc.2"
+  resolved "https://registry.npmmirror.com/alemonjs-mhy/-/alemonjs-mhy-1.0.0-rc.2.tgz#4c61621cb82421e820e8b99a6bf988f0c9595009"
+  integrity sha512-KKYb2WmxegLwK9iZ6gqHeCJHq9Hrs6nCy7dhiTlBeaybEokKpYLa2+NfM+8pef1QehXyDejLldWUoHmMwciXLQ==
   dependencies:
     classnames "^2.5.1"
     jsxp "^1.3.0"

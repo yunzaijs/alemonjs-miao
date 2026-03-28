@@ -4,27 +4,7 @@
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-
-// ─── 颜色常量 ────────────────────────────────────────
-
-const STAR_BORDER: Record<number, string> = {
-  5: '#ce8d54',
-  4: '#a0a0e8',
-  3: '#6ba8e8'
-};
-
-const ELEMENT_COLORS: Record<string, string> = {
-  火: '#ef5350',
-  水: '#42a5f5',
-  风: '#66bb6a',
-  雷: '#ab47bc',
-  草: '#8bc34a',
-  冰: '#29b6f6',
-  岩: '#ffa726',
-  物理: '#9e9e9e',
-  量子: '#7e57c2',
-  虚数: '#fdd835'
-};
+import { DARK_BG, ELEMENT_COLORS, FONT_FAMILY, STAR_COLORS, formatDateZh } from './shared.js';
 
 // ─── 统计条 ─────────────────────────────────────────
 
@@ -48,9 +28,10 @@ function StatBar({ label, value, max, color }: { label: string; value: number; m
           style={{
             width: `${pct}%`,
             height: '100%',
-            background: color,
+            background: `linear-gradient(90deg, ${color}cc, ${color})`,
             borderRadius: '3px',
-            minWidth: value > 0 ? '2px' : '0'
+            minWidth: value > 0 ? '2px' : '0',
+            boxShadow: `0 0 6px ${color}44`
           }}
         />
         <span
@@ -74,7 +55,7 @@ function StatBar({ label, value, max, color }: { label: string; value: number; m
 // ─── 角色列表行 ──────────────────────────────────────
 
 function CharRow({ avatar, game }: { avatar: ProfileAvatar; game: string }) {
-  const border = STAR_BORDER[avatar.rarity] ?? STAR_BORDER[4];
+  const border = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[4];
   const elemColor = ELEMENT_COLORS[avatar.element] ?? '#888';
   const consLabel = game === 'sr' ? '星魂' : '命座';
   const weaponLabel = game === 'sr' ? '光锥' : '武器';
@@ -211,8 +192,8 @@ export default function TrainingStatCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '400px'
@@ -401,7 +382,7 @@ export default function TrainingStatCard({ data }: Props) {
           }}
         >
           <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</span>
+          <span>{formatDateZh()}</span>
         </div>
       </div>
     </HTML>

@@ -118,10 +118,11 @@ const ARTIFACT_PROP_NAME: Record<string, string> = {
   FIGHT_PROP_ICE_ADD_HURT: '冰元素伤害加成'
 };
 
-function fmtPropValue(propId: string, value: number): string {
+/** Enka flat 圣遗物词条值已是最终形式（百分比不需 ×100） */
+function fmtArtifactValue(propId: string, value: number): string {
   const isPercent = /_PERCENT|CRITICAL|CHARGE_EFFICIENCY|HEAL_ADD|_ADD_HURT/.test(propId);
 
-  return isPercent ? `${(value * 100).toFixed(1)}%` : Math.floor(value).toString();
+  return isPercent ? `${value.toFixed(1)}%` : Math.floor(value).toString();
 }
 
 /** 从 fightPropMap 提取属性面板 */
@@ -265,7 +266,7 @@ export async function fetchEnkaGS(uid: string): Promise<ProfileData | null> {
                 subStats.push({
                   key: propId,
                   name: ARTIFACT_PROP_NAME[propId] ?? propId,
-                  value: fmtPropValue(propId, sub.statValue ?? 0)
+                  value: fmtArtifactValue(propId, sub.statValue ?? 0)
                 });
               }
             }
@@ -279,7 +280,7 @@ export async function fetchEnkaGS(uid: string): Promise<ProfileData | null> {
               level: (equip.reliquary?.level ?? 1) - 1,
               mainKey: mainStat?.mainPropId ?? '',
               mainName: ARTIFACT_PROP_NAME[mainStat?.mainPropId ?? ''] ?? '',
-              mainValue: fmtPropValue(mainStat?.mainPropId ?? '', mainStat?.statValue ?? 0),
+              mainValue: fmtArtifactValue(mainStat?.mainPropId ?? '', mainStat?.statValue ?? 0),
               subStats
             });
           }

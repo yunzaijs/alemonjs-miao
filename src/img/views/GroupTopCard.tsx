@@ -5,27 +5,7 @@ import { scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-
-// ─── 颜色常量 ────────────────────────────────────────
-
-const ELEMENT_COLORS: Record<string, string> = {
-  火: '#ef5350',
-  水: '#42a5f5',
-  风: '#66bb6a',
-  雷: '#ab47bc',
-  草: '#8bc34a',
-  冰: '#29b6f6',
-  岩: '#ffa726',
-  物理: '#9e9e9e',
-  量子: '#7e57c2',
-  虚数: '#fdd835'
-};
-
-const STAR_COLOR: Record<number, string> = {
-  5: '#ce8d54',
-  4: '#a0a0e8',
-  3: '#6ba8e8'
-};
+import { DARK_BG, ELEMENT_COLORS, FONT_FAMILY, formatDateZh, STAR_COLORS } from './shared.js';
 
 // ─── 主组件 ──────────────────────────────────────────
 
@@ -49,7 +29,7 @@ const TYPE_LABELS: Record<string, string> = {
 export default function GroupTopCard({ data }: Props) {
   const { avatar, game, uid, type } = data;
   const elemColor = ELEMENT_COLORS[avatar.element] ?? '#888';
-  const starColor = STAR_COLOR[avatar.rarity] ?? STAR_COLOR[5];
+  const starColor = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[5];
   const artScore = scoreCharacterArtifacts(avatar);
   const typeLabel = TYPE_LABELS[type] ?? type;
   const consLabel = game === 'sr' ? '星魂' : '命座';
@@ -75,8 +55,8 @@ export default function GroupTopCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '300px'
@@ -327,7 +307,7 @@ export default function GroupTopCard({ data }: Props) {
           }}
         >
           <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</span>
+          <span>{formatDateZh()}</span>
         </div>
       </div>
     </HTML>

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
+import { FONT_FAMILY, RARITY_COLORS, formatDate } from './shared.js';
 
 // ─── 类型定义 ────────────────────────────────────────
 
@@ -68,12 +69,6 @@ export interface RoleCombatData {
 
 // ─── 样式 ────────────────────────────────────────────
 
-const RARITY_COLORS: Record<number, string> = {
-  5: '#c6923a',
-  4: '#a256e1',
-  3: '#5180cb'
-};
-
 function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
     <div
@@ -94,8 +89,7 @@ function StatRow({ label, value }: { label: string; value: string | number }) {
 // ─── 主组件 ──────────────────────────────────────────
 
 export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
-  const now = new Date();
-  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const dateStr = formatDate();
 
   const noData = !data.has_data || data.data.length === 0;
   const noDetail = data.has_data && !data.has_detail_data;
@@ -116,7 +110,7 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
         style={{
           padding: '24px',
           background: 'linear-gradient(180deg, #f0ebe3 0%, #f5f6fb 40%)',
-          fontFamily: '"tttgbnumber", system-ui, sans-serif',
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#1e1f20'
         }}

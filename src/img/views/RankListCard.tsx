@@ -6,6 +6,7 @@ import { getGrade } from '@src/model/miao/artisMark.js';
 import type { RankEntry } from '@src/model/miao/profileRank.js';
 import React from 'react';
 import HTML from './HTML.js';
+import { DARK_BG, ELEMENT_COLORS, FONT_FAMILY, formatDateZh } from './shared.js';
 
 // ─── 颜色常量 ────────────────────────────────────────
 
@@ -19,7 +20,7 @@ const RANK_MEDAL: Record<number, string> = {
 
 function RankRow({ entry, idx, type }: { entry: RankEntry; idx: number; type: string }) {
   const medalColor = RANK_MEDAL[entry.rank];
-  const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'rgba(50,50,50,0.4)';
+  const bgColor = medalColor ? `linear-gradient(90deg, ${medalColor}18, transparent)` : idx % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'rgba(50,50,50,0.4)';
 
   let gradeInfo: ArtisGradeInfo | null = null;
 
@@ -121,19 +122,6 @@ const TYPE_LABELS: Record<string, string> = {
   crit: '双爆排名'
 };
 
-const ELEMENT_COLORS: Record<string, string> = {
-  火: '#ef5350',
-  水: '#42a5f5',
-  风: '#66bb6a',
-  雷: '#ab47bc',
-  草: '#8bc34a',
-  冰: '#29b6f6',
-  岩: '#ffa726',
-  物理: '#9e9e9e',
-  量子: '#7e57c2',
-  虚数: '#fdd835'
-};
-
 export default function RankListCard({ data }: Props) {
   const { charName, charElement, type, entries, game } = data;
   const typeLabel = TYPE_LABELS[type] ?? type;
@@ -144,8 +132,8 @@ export default function RankListCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '300px'
@@ -241,7 +229,7 @@ export default function RankListCard({ data }: Props) {
           }}
         >
           <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</span>
+          <span>{formatDateZh()}</span>
         </div>
       </div>
     </HTML>

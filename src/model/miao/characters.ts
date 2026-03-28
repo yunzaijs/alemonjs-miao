@@ -102,7 +102,7 @@ export const GS_CHARACTERS: Record<number, CharacterMeta> = {
   10000099: { name: '茜特菈莉', abbr: '茜特菈莉', element: '草', rarity: 5, weaponType: '法器' },
   10000100: { name: '玛薇卡', abbr: '玛薇卡', element: '火', rarity: 5, weaponType: '双手剑' },
   10000101: { name: '兰那罗', abbr: '兰那罗', element: '草', rarity: 4, weaponType: '弓' },
-  10000102: { name: '瓦蕾莎', abbr: '瓦蕾莎', element: '冰', rarity: 5, weaponType: '双手剑' },
+  10000102: { name: '瓦雷莎', abbr: '瓦雷莎', element: '冰', rarity: 5, weaponType: '双手剑' },
   10000103: { name: '伊安珊', abbr: '伊安珊', element: '风', rarity: 5, weaponType: '单手剑' }
 };
 

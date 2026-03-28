@@ -4,39 +4,22 @@
 import type { ProfileData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-
-// ─── 颜色常量 (原版 CSS) ────────────────────────────
-
-const STAR_BORDER: Record<number, string> = {
-  5: '#ce8d54',
-  4: '#a0a0e8',
-  3: '#6ba8e8'
-};
-
-const CONS_BG: Record<number, string> = {
-  0: '#8e8e8e',
-  1: '#5d9e5e',
-  2: '#5c85c1',
-  3: '#7267b0',
-  4: '#a85fa5',
-  5: '#c2733a',
-  6: '#d4a574'
-};
+import { CONS_COLORS, CONS_SUFFIX, DARK_BG, FONT_FAMILY, STAR_COLORS } from './shared.js';
 
 // ─── 单个角色项 ─────────────────────────────────────
 
-function CharItem({ avatar }: { avatar: ProfileData['avatars'][0] }) {
-  const border = STAR_BORDER[avatar.rarity] ?? STAR_BORDER[4];
-  const consBg = CONS_BG[avatar.cons] ?? CONS_BG[0];
+function CharItem({ avatar, game }: { avatar: ProfileData['avatars'][0]; game: string }) {
+  const border = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[4];
+  const consBg = CONS_COLORS[avatar.cons] ?? CONS_COLORS[0];
+  const suffix = CONS_SUFFIX[game] ?? '命';
 
   return (
     <div
       style={{
-        width: '75px',
+        width: '78px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        margin: '5px 0'
+        alignItems: 'center'
       }}
     >
       {/* 头像 */}
@@ -89,6 +72,7 @@ function CharItem({ avatar }: { avatar: ProfileData['avatars'][0] }) {
           }}
         >
           {avatar.cons}
+          {suffix}
         </span>
       </div>
     </div>
@@ -107,8 +91,8 @@ export default function ProfileListCard({ data }: Props) {
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '300px'
@@ -160,11 +144,11 @@ export default function ProfileListCard({ data }: Props) {
             padding: '14px 20px',
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'flex-start'
+            gap: '10px 0'
           }}
         >
           {data.avatars.length > 0 ? (
-            data.avatars.map(av => <CharItem key={av.id} avatar={av} />)
+            data.avatars.map(av => <CharItem key={av.id} avatar={av} game={data.game} />)
           ) : (
             <div
               style={{

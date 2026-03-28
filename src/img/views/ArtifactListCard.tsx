@@ -5,14 +5,9 @@ import { scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
+import { DARK_BG, FONT_FAMILY, formatDateZh, STAR_COLORS } from './shared.js';
 
 // ─── 颜色常量 ────────────────────────────────────────
-
-const STAR_BORDER: Record<number, string> = {
-  5: '#ce8d54',
-  4: '#a0a0e8',
-  3: '#6ba8e8'
-};
 
 const POS_NAMES_GS = ['生之花', '死之羽', '时之沙', '空之杯', '理之冠'];
 const POS_NAMES_SR = ['头部', '手部', '躯干', '脚部', '位面球', '连结绳'];
@@ -22,11 +17,11 @@ const POS_NAMES_SR = ['头部', '手部', '躯干', '脚部', '位面球', '连�
 interface CharRowProps {
   avatar: ProfileAvatar;
   game: string;
+  score: ReturnType<typeof scoreCharacterArtifacts>;
 }
 
-function CharArtifactRow({ avatar, game }: CharRowProps) {
-  const score = scoreCharacterArtifacts(avatar);
-  const border = STAR_BORDER[avatar.rarity] ?? STAR_BORDER[4];
+function CharArtifactRow({ avatar, game, score }: CharRowProps) {
+  const border = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[4];
   const posNames = game === 'sr' ? POS_NAMES_SR : POS_NAMES_GS;
 
   return (
@@ -82,24 +77,24 @@ function CharArtifactRow({ avatar, game }: CharRowProps) {
               flexDirection: 'column',
               alignItems: 'center',
               background: 'rgba(0,0,0,0.25)',
-              borderRadius: '4px',
-              padding: '4px 6px',
+              borderRadius: '6px',
+              padding: '5px 6px',
               minWidth: '44px',
               flex: 1
             }}
           >
-            <span style={{ fontSize: '9px', color: '#888' }}>{posNames[i] ?? `#${art.pos}`}</span>
+            <span style={{ fontSize: '10px', color: '#888' }}>{posNames[i] ?? `#${art.pos}`}</span>
             <span
               style={{
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: 'bold',
                 color: art.grade.color,
-                marginTop: '1px'
+                marginTop: '2px'
               }}
             >
               {art.mark}
             </span>
-            <span style={{ fontSize: '9px', color: art.grade.color }}>{art.grade.grade}</span>
+            <span style={{ fontSize: '10px', color: art.grade.color }}>{art.grade.grade}</span>
           </div>
         ))}
       </div>
@@ -114,7 +109,7 @@ function CharArtifactRow({ avatar, game }: CharRowProps) {
           minWidth: '50px'
         }}
       >
-        <span style={{ fontSize: '9px', color: '#888' }}>总分</span>
+        <span style={{ fontSize: '10px', color: '#888' }}>总分</span>
         <span
           style={{
             fontSize: '16px',
@@ -153,23 +148,19 @@ interface Props {
 export default function ArtifactListCard({ data }: Props) {
   const { avatars, game, uid } = data;
 
-  // 按总评分排序（高分靠前）
-  const sorted = [...avatars]
+  // 预计算评分并排序（避免排序过程中重复计算）
+  const scored = avatars
     .filter(av => av.artifacts && av.artifacts.length > 0)
-    .sort((a, b) => {
-      const sa = scoreCharacterArtifacts(a).totalMark;
-      const sb = scoreCharacterArtifacts(b).totalMark;
-
-      return sb - sa;
-    });
+    .map(av => ({ av, score: scoreCharacterArtifacts(av) }))
+    .sort((a, b) => b.score.totalMark - a.score.totalMark);
 
   return (
     <HTML style={{ width: '700px' }}>
       <div
         style={{
           padding: '0',
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-          fontFamily: '"tttgbnumber", "PingFang SC", system-ui, sans-serif',
+          background: DARK_BG,
+          fontFamily: FONT_FAMILY,
           fontSize: '14px',
           color: '#eee',
           minHeight: '300px'
@@ -209,14 +200,14 @@ export default function ArtifactListCard({ data }: Props) {
               marginTop: '6px'
             }}
           >
-            共 {sorted.length} 名角色，按{game === 'sr' ? '遗器' : '圣遗物'}评分排序
+            共 {scored.length} 名角色，按{game === 'sr' ? '遗器' : '圣遗物'}评分排序
           </div>
         </div>
 
         {/* 角色列表 */}
         <div style={{ padding: '14px 20px' }}>
-          {sorted.length > 0 ? (
-            sorted.map(av => <CharArtifactRow key={av.id} avatar={av} game={game} />)
+          {scored.length > 0 ? (
+            scored.map(({ av, score }) => <CharArtifactRow key={av.id} avatar={av} game={game} score={score} />)
           ) : (
             <div
               style={{
@@ -244,7 +235,7 @@ export default function ArtifactListCard({ data }: Props) {
           }}
         >
           <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</span>
+          <span>{formatDateZh()}</span>
         </div>
       </div>
     </HTML>
