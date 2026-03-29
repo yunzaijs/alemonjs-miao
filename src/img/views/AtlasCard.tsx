@@ -7,7 +7,7 @@ import type { GsCharacterData } from '@src/model/miao/gsData.js';
 import type { SrCharacterData } from '@src/model/miao/srData.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { ELEM_BG, ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, RARITY_COLORS } from './shared.js';
+import { contStyle, contTitleStyle, ELEM_BG, ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, RARITY_COLORS } from './shared.js';
 
 // ─── 数据类型 ────────────────────────────────────────
 
@@ -330,13 +330,6 @@ function SrAtlasCard({ data }: { data: AtlasCardData }) {
 // GS 图鉴卡片 — 原神角色图鉴（数据驱动）
 // ═══════════════════════════════════════════════════════
 
-/** 天赋类型图标 */
-const TALENT_ICONS: Record<string, string> = {
-  a: '⚔️',
-  e: '🔮',
-  q: '💫'
-};
-
 /** 命座颜色 */
 const GS_CONS_COLORS = ['#5cbac2', '#339d61', '#3e95b9', '#3955b7', '#531ba9', '#ff5722'];
 
@@ -358,20 +351,6 @@ const WEAPON_CN: Record<string, string> = {
   polearm: '长柄武器',
   bow: '弓',
   catalyst: '法器'
-};
-
-/** 武器类型图标 */
-const WEAPON_ICONS: Record<string, string> = {
-  sword: '🗡️',
-  claymore: '⚔️',
-  polearm: '🔱',
-  bow: '🏹',
-  catalyst: '📖',
-  单手剑: '🗡️',
-  双手剑: '⚔️',
-  长柄武器: '🔱',
-  弓: '🏹',
-  法器: '📖'
 };
 
 /** 突破属性中文 */
@@ -396,327 +375,383 @@ function stripHtml(s: string): string {
 function GsAtlasCard({ data }: { data: AtlasCardData }) {
   const gs = data.gsData;
   const elemKey = gs?.elem ?? data.element ?? '';
-  const elemColor = ELEMENT_COLORS[elemKey] ?? ELEMENT_COLORS[ELEM_CN[elemKey] ?? ''] ?? '#888';
-  const bgUrl = ELEM_BG[elemKey] ?? ELEM_BG[ELEM_CN[elemKey] ?? ''] ?? ELEM_BG['水'];
+  const elemCn = ELEM_CN[elemKey] ?? elemKey;
+  const bgUrl = ELEM_BG[elemKey] ?? ELEM_BG[elemCn] ?? ELEM_BG['水'];
+  const elemColor = ELEMENT_COLORS[elemCn] ?? ELEMENT_COLORS['水'];
   const star = gs?.star ?? data.rarity ?? 4;
   const rarityColor = RARITY_COLORS[star] ?? '#c6923a';
   const weaponCn = gs ? (WEAPON_CN[gs.weapon] ?? gs.weapon) : (data.weaponType ?? '');
-  const elemCn = ELEM_CN[elemKey] ?? elemKey;
+
+  /** cont 面板 */
+  const contBox = (children: React.ReactNode) => <div style={contStyle({ margin: '6px 0' })}>{children}</div>;
+
+  /** cont-title 标题栏 */
+  const contHead = (title: string) => (
+    <div style={contTitleStyle({ borderRadius: '0', padding: '8px 16px' })}>
+      <span style={{ fontFamily: FONT_NZBZ, fontSize: '15px' }}>{title}</span>
+    </div>
+  );
+
+  /** 小标签 pill */
+  const pill = (text: string, bg: string) => (
+    <span
+      style={{
+        fontSize: '12px',
+        padding: '2px 10px',
+        borderRadius: '10px',
+        background: bg,
+        color: '#fff',
+        display: 'inline-block',
+        textShadow: '0 0 2px rgba(0,0,0,0.5)'
+      }}
+    >
+      {text}
+    </span>
+  );
+
+  /** 角色信息行 */
+  const metaRow = (label: string, value: string) => (
+    <div style={{ display: 'flex', fontSize: '13px', lineHeight: '1.8' }}>
+      <span style={{ color: '#d3bc8e', width: '70px', flexShrink: 0 }}>{label}</span>
+      <span style={{ color: '#fff' }}>{value}</span>
+    </div>
+  );
+
+  /** 材料列表 */
+  const materials = gs?.materials
+    ? [gs.materials.gem, gs.materials.boss, gs.materials.specialty, gs.materials.normal, gs.materials.talent, gs.materials.weekly].filter(Boolean)
+    : [];
 
   return (
-    <HTML style={{ width: '800px' }}>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
           fontFamily: FONT_FAMILY,
           color: '#fff',
+          width: '600px',
           backgroundImage: `url(${bgUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'left top',
+          padding: '15px',
           position: 'relative',
-          width: '800px'
+          overflow: 'hidden'
         }}
       >
-        {/* ═══ 顶部: 头像 + 角色信息面板 ═══ */}
+        {/* ═══ Header — 头像 + 角色信息 ═══ */}
         <div
           style={{
-            position: 'relative',
-            padding: '30px',
             display: 'flex',
-            gap: '24px',
-            alignItems: 'flex-start'
+            gap: '16px',
+            padding: '16px',
+            marginBottom: '8px',
+            background: 'rgba(0,0,0,0.3)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(4px)',
+            position: 'relative'
           }}
         >
-          {/* 角色头像 */}
-          <div
-            style={{
-              width: '180px',
-              height: '180px',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              border: `4px solid ${elemColor}`,
-              boxShadow: `0 0 20px ${elemColor}50, 0 4px 12px rgba(0,0,0,0.4)`,
-              flexShrink: 0,
-              background: 'rgba(0,0,0,0.3)'
-            }}
-          >
-            {data.faceImg ? (
+          {/* 头像 */}
+          {data.faceImg && (
+            <div
+              style={{
+                width: '120px',
+                height: '120px',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                border: `3px solid ${elemColor}`,
+                boxShadow: `0 0 12px ${elemColor}40, 0 4px 8px rgba(0,0,0,0.5)`,
+                flexShrink: 0
+              }}
+            >
               <img src={data.faceImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', opacity: 0.3 }}>
-                ?
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* 右侧信息 */}
-          <div style={{ flex: 1 }}>
-            {/* 名称 + 称号 */}
-            <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px', color: '#d3bc8e', textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}>{data.name}</div>
-            {gs?.title && <div style={{ fontSize: '14px', color: '#ccc', marginTop: '2px', opacity: 0.8 }}>{gs.title}</div>}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+            {/* 名字 + 称号 */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+              <span
+                style={{
+                  fontFamily: FONT_NZBZ,
+                  fontSize: '32px',
+                  textShadow: '0 0 3px #000, 2px 2px 4px rgba(0,0,0,0.7)',
+                  lineHeight: '1.1'
+                }}
+              >
+                {data.name}
+              </span>
+              {gs?.title && <span style={{ fontSize: '14px', color: '#d3bc8e', textShadow: '0 0 2px #000' }}>{gs.title}</span>}
+            </div>
 
             {/* 星级 */}
-            <div style={{ display: 'flex', gap: '3px', marginTop: '6px' }}>
+            <div style={{ display: 'flex', gap: '1px', margin: '4px 0 8px' }}>
               {Array.from({ length: star }).map((_, i) => (
-                <span key={i} style={{ fontSize: '22px', color: rarityColor, textShadow: `0 0 6px ${rarityColor}` }}>
+                <span key={i} style={{ fontSize: '16px', color: rarityColor, textShadow: `0 0 4px ${rarityColor}` }}>
                   ★
                 </span>
               ))}
             </div>
 
-            {/* 元素 + 武器 + 所属标签 */}
-            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <span
-                style={{
-                  padding: '4px 16px',
-                  borderRadius: '14px',
-                  background: `${elemColor}90`,
-                  fontSize: '15px',
-                  fontWeight: 'bold',
-                  boxShadow: `0 0 8px ${elemColor}40`
-                }}
-              >
-                {elemCn}
-              </span>
-              <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(255,255,255,0.18)', fontSize: '15px' }}>
-                {WEAPON_ICONS[gs?.weapon ?? weaponCn] ?? ''} {weaponCn}
-              </span>
-              {gs?.allegiance && (
-                <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(232,213,176,0.25)', fontSize: '13px' }}>{gs.allegiance}</span>
-              )}
+            {/* 元素 + 武器 标签 */}
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {elemCn && pill(elemCn, elemColor)}
+              {weaponCn && pill(weaponCn, 'rgba(255,255,255,0.15)')}
             </div>
-
-            {/* 基础属性 */}
-            {gs && (
-              <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <GsAttrTag label='生命值' value={String(Math.round(gs.baseAttr.hp))} color='#5cbac2' />
-                <GsAttrTag label='攻击力' value={String(Math.round(gs.baseAttr.atk))} color='#ff5722' />
-                <GsAttrTag label='防御力' value={String(Math.round(gs.baseAttr.def))} color='#ffa726' />
-                <GsAttrTag label={GROW_ATTR_CN[gs.growAttr.key] ?? gs.growAttr.key} value={gs.growAttr.value + '%'} color='#ba98f8' />
-              </div>
-            )}
-
-            {/* 简介 */}
-            {gs?.desc && (
-              <div style={{ marginTop: '10px', fontSize: '12px', color: '#ddd', opacity: 0.7, lineHeight: '1.5' }}>
-                {gs.desc.length > 80 ? gs.desc.slice(0, 80) + '...' : gs.desc}
-              </div>
-            )}
-
-            {/* 声优 */}
-            {gs && (gs.cncv || gs.jpcv) && (
-              <div style={{ marginTop: '6px', fontSize: '11px', color: '#bbb', opacity: 0.6 }}>
-                {gs.cncv && <span>CN: {gs.cncv}</span>}
-                {gs.cncv && gs.jpcv && <span style={{ margin: '0 8px' }}>|</span>}
-                {gs.jpcv && <span>JP: {gs.jpcv}</span>}
-              </div>
-            )}
           </div>
+
+          {/* 底部渐变色条 */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              right: 0,
+              height: '3px',
+              borderRadius: '0 0 12px 12px',
+              background: `linear-gradient(90deg, ${rarityColor}, ${elemColor})`
+            }}
+          />
         </div>
 
-        {/* ═══ 升级材料 ═══ */}
-        {gs?.materials && (
-          <div style={{ margin: '0 20px 10px' }}>
-            <GsSectionTitle title='升级材料' />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px 0' }}>
-              {[
-                { label: '宝石', value: gs.materials.gem },
-                { label: 'Boss素材', value: gs.materials.boss },
-                { label: '特产', value: gs.materials.specialty },
-                { label: '普通素材', value: gs.materials.normal },
-                { label: '天赋素材', value: gs.materials.talent },
-                { label: '周本素材', value: gs.materials.weekly }
-              ]
-                .filter(m => m.value)
-                .map(m => (
+        {/* ═══ 角色信息 — 命之座/生日/归属/CV ═══ */}
+        {gs && (gs.astro || gs.birthday || gs.allegiance || gs.cncv) && (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0 24px',
+              padding: '8px 16px',
+              marginBottom: '8px',
+              background: 'rgba(0,0,0,0.25)',
+              borderRadius: '8px',
+              backdropFilter: 'blur(2px)'
+            }}
+          >
+            {gs.astro && metaRow('命之座', gs.astro)}
+            {gs.birthday && metaRow('生日', gs.birthday)}
+            {gs.allegiance && metaRow('归属', gs.allegiance)}
+            {gs.cncv && metaRow('中文CV', gs.cncv)}
+            {gs.jpcv && metaRow('日文CV', gs.jpcv)}
+          </div>
+        )}
+
+        {/* ═══ 基础属性 — 2×2 网格 ═══ */}
+        {gs &&
+          contBox(
+            <>
+              {contHead('Lv.90 基础属性')}
+              <div style={{ display: 'flex', flexWrap: 'wrap', padding: '6px' }}>
+                {[
+                  ['生命值', String(Math.round(gs.baseAttr.hp)), '#4fc3f7'],
+                  ['攻击力', String(Math.round(gs.baseAttr.atk)), '#ef5350'],
+                  ['防御力', String(Math.round(gs.baseAttr.def)), '#ffa726'],
+                  [GROW_ATTR_CN[gs.growAttr.key] ?? gs.growAttr.key, gs.growAttr.value + '%', '#ab47bc']
+                ].map(([label, value, accent]) => (
                   <div
-                    key={m.label}
+                    key={label}
                     style={{
+                      width: '50%',
+                      padding: '6px 12px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 14px',
-                      background: 'rgba(0,0,0,0.2)',
-                      borderRadius: '8px',
-                      borderLeft: `3px solid ${elemColor}`,
-                      minWidth: '220px'
+                      gap: '8px'
                     }}
                   >
-                    <span style={{ fontSize: '12px', opacity: 0.6, flexShrink: 0 }}>{m.label}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 'bold', marginLeft: 'auto' }}>{m.value}</span>
+                    <div
+                      style={{
+                        width: '6px',
+                        height: '28px',
+                        borderRadius: '3px',
+                        background: accent,
+                        flexShrink: 0
+                      }}
+                    />
+                    <div>
+                      <div style={{ fontSize: '11px', color: '#d3bc8e' }}>{label}</div>
+                      <div style={{ fontSize: '18px', fontFamily: FONT_NZBZ, lineHeight: '1.2' }}>{value}</div>
+                    </div>
                   </div>
                 ))}
-            </div>
-          </div>
-        )}
+              </div>
+            </>
+          )}
 
-        {/* ═══ 角色天赋（普攻/E/Q） ═══ */}
-        {gs && gs.talents.length > 0 && (
-          <div style={{ margin: '0 20px 10px' }}>
-            <GsSectionTitle title='角色天赋' />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
-              {gs.talents.map(t => (
-                <div
-                  key={t.key}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '10px',
-                    padding: '12px 14px',
-                    background: 'rgba(0,0,0,0.2)',
-                    borderRadius: '8px',
-                    borderLeft: `3px solid ${elemColor}`
-                  }}
-                >
-                  <span style={{ fontSize: '24px', flexShrink: 0, width: '32px', textAlign: 'center', marginTop: '2px' }}>{TALENT_ICONS[t.key] ?? '📜'}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{t.name}</span>
-                      <span style={{ fontSize: '11px', padding: '1px 8px', borderRadius: '4px', background: `${elemColor}60` }}>
-                        {t.key === 'a' ? '普通攻击' : t.key === 'e' ? '元素战技' : '元素爆发'}
-                      </span>
-                    </div>
-                    {/* 天赋描述 */}
-                    {t.desc.length > 0 && (
-                      <div style={{ fontSize: '12px', color: '#ccc', marginTop: '4px', lineHeight: '1.5', opacity: 0.8 }}>
-                        {t.desc.map((d, i) => (
-                          <div key={i}>{stripHtml(d)}</div>
-                        ))}
-                      </div>
-                    )}
-                    {/* 倍率名称列表 */}
-                    {t.tableNames.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
-                        {t.tableNames.slice(0, 8).map(tn => (
-                          <span key={tn} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.1)' }}>
-                            {tn}
-                          </span>
-                        ))}
-                        {t.tableNames.length > 8 && <span style={{ fontSize: '11px', padding: '2px 8px', opacity: 0.5 }}>+{t.tableNames.length - 8}</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ═══ 固有天赋 ═══ */}
-        {gs && gs.passives.length > 0 && (
-          <div style={{ margin: '0 20px 10px' }}>
-            <GsSectionTitle title='固有天赋' />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
-              {gs.passives.map((p, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '10px',
-                    padding: '10px 14px',
-                    background: 'rgba(0,0,0,0.2)',
-                    borderRadius: '8px',
-                    borderLeft: '3px solid #d3bc8e'
-                  }}
-                >
-                  <span style={{ fontSize: '20px', flexShrink: 0, width: '28px', textAlign: 'center', marginTop: '2px' }}>📜</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{p.name}</div>
-                    <div style={{ fontSize: '12px', color: '#ccc', marginTop: '3px', lineHeight: '1.5', opacity: 0.8 }}>
-                      {p.desc.map((d, j) => (
-                        <div key={j}>{stripHtml(d)}</div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ═══ 命之座 ═══ */}
-        {gs && gs.constellations.length > 0 && (
-          <div style={{ margin: '0 20px 10px' }}>
-            <GsSectionTitle title={`命之座 · ${gs.astro || '命之座'}`} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
-              {gs.constellations.map((c, i) => (
-                <div
-                  key={c.index}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '10px',
-                    padding: '10px 14px',
-                    background: 'rgba(0,0,0,0.2)',
-                    borderRadius: '8px',
-                    borderLeft: `4px solid ${GS_CONS_COLORS[i] ?? '#999'}`
-                  }}
-                >
-                  <span
+        {/* ═══ 突破材料 ═══ */}
+        {materials.length > 0 &&
+          contBox(
+            <>
+              {contHead('突破材料')}
+              <div style={{ display: 'flex', flexWrap: 'wrap', padding: '8px 10px', gap: '6px' }}>
+                {materials.map((mat, i) => (
+                  <div
+                    key={i}
                     style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      color: GS_CONS_COLORS[i] ?? '#999',
-                      width: '28px',
+                      flex: '1 1 auto',
+                      minWidth: '75px',
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      background: 'rgba(0,0,0,0.3)',
                       textAlign: 'center',
-                      flexShrink: 0,
-                      marginTop: '2px'
+                      fontSize: '12px',
+                      lineHeight: '1.4',
+                      textShadow: '0 0 2px #000'
                     }}
                   >
-                    {c.index}
-                  </span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.name}</div>
-                    <div style={{ fontSize: '12px', color: '#ccc', marginTop: '3px', lineHeight: '1.5', opacity: 0.8 }}>
-                      {c.desc.map((d, j) => (
-                        <div key={j}>{stripHtml(d)}</div>
-                      ))}
+                    {mat}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+        {/* ═══ 角色天赋 ═══ */}
+        {gs &&
+          gs.talents.length > 0 &&
+          contBox(
+            <>
+              {contHead('角色天赋')}
+              <div style={{ padding: '6px 10px' }}>
+                {gs.talents.map((t, ti) => (
+                  <div
+                    key={t.key}
+                    style={{
+                      display: 'flex',
+                      gap: '10px',
+                      padding: '8px 0',
+                      borderBottom: ti < gs.talents.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none'
+                    }}
+                  >
+                    {/* 天赋内容 */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                        <span style={{ fontFamily: FONT_NZBZ, fontSize: '13px', color: '#d3bc8e' }}>
+                          {t.key === 'a' ? '普通攻击' : t.key === 'e' ? '元素战技' : '元素爆发'}
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{t.name}</span>
+                      </div>
+                      {t.desc.length > 0 && (
+                        <div style={{ fontSize: '12px', color: '#bbb', lineHeight: '1.5' }}>
+                          {t.desc.slice(0, 2).map((d, i) => (
+                            <div key={i}>{stripHtml(d)}</div>
+                          ))}
+                        </div>
+                      )}
+                      {t.tableNames.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginTop: '4px' }}>
+                          {t.tableNames.slice(0, 6).map(tn => (
+                            <span
+                              key={tn}
+                              style={{ fontSize: '11px', padding: '1px 6px', borderRadius: '3px', background: 'rgba(211,188,142,0.12)', color: '#d3bc8e' }}
+                            >
+                              {tn}
+                            </span>
+                          ))}
+                          {t.tableNames.length > 6 && <span style={{ fontSize: '11px', padding: '1px 6px', color: '#888' }}>+{t.tableNames.length - 6}</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+                ))}
+              </div>
+            </>
+          )}
 
-        {/* 底栏 */}
-        <div style={{ textAlign: 'right', padding: '8px 24px 12px', fontSize: '12px', opacity: 0.4 }}>Miao By ALemonJS</div>
+        {/* ═══ 固有天赋 ═══ */}
+        {gs &&
+          gs.passives.length > 0 &&
+          contBox(
+            <>
+              {contHead('固有天赋')}
+              <div style={{ padding: '6px 10px' }}>
+                {gs.passives.map((p, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: '6px 0',
+                      borderBottom: i < gs.passives.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none'
+                    }}
+                  >
+                    <div style={{ fontFamily: FONT_NZBZ, fontSize: '13px', color: '#d3bc8e', marginBottom: '2px' }}>📜 {p.name}</div>
+                    <div style={{ fontSize: '12px', color: '#bbb', lineHeight: '1.5', paddingLeft: '18px' }}>
+                      {p.desc.slice(0, 2).map((d, j) => (
+                        <div key={j}>{stripHtml(d)}</div>
+                      ))}
+                      {p.desc.length > 2 && <div style={{ color: '#888' }}>...</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+        {/* ═══ 命之座 ═══ */}
+        {gs &&
+          gs.constellations.length > 0 &&
+          contBox(
+            <>
+              {contHead(`命之座 · ${gs.astro || '命之座'}`)}
+              <div style={{ padding: '6px 10px' }}>
+                {gs.constellations.map((c, i) => (
+                  <div
+                    key={c.index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '10px',
+                      padding: '6px 0',
+                      borderBottom: i < gs.constellations.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none'
+                    }}
+                  >
+                    {/* 命座序号圆圈 */}
+                    <div
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, ${GS_CONS_COLORS[i] ?? '#999'}, ${GS_CONS_COLORS[i] ?? '#999'}80)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: FONT_NZBZ,
+                        fontSize: '14px',
+                        flexShrink: 0,
+                        marginTop: '2px',
+                        boxShadow: `0 0 6px ${GS_CONS_COLORS[i] ?? '#999'}40`
+                      }}
+                    >
+                      {c.index}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#d3bc8e', lineHeight: '1.6' }}>{c.name}</div>
+                      <div style={{ fontSize: '12px', color: '#bbb', lineHeight: '1.5' }}>
+                        {c.desc.slice(0, 2).map((d, j) => (
+                          <div key={j}>{stripHtml(d)}</div>
+                        ))}
+                        {c.desc.length > 2 && <div style={{ color: '#888' }}>...</div>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+        {/* 提示 + 底栏 */}
+        <div style={{ textAlign: 'center', padding: '6px 0 2px', fontSize: '12px', color: 'rgba(255,255,255,0.5)', textShadow: '0 0 1px #000' }}>
+          输入
+          <span style={{ color: '#d3bc8e' }}>
+            #{data.name}天赋、#{data.name}命座
+          </span>
+          可查看详细信息
+        </div>
+        <div style={{ textAlign: 'right', padding: '2px 10px 4px', fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>Miao By ALemonJS</div>
       </div>
     </HTML>
   );
 }
 
-/** 属性标签 */
-function GsAttrTag({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '6px 14px',
-        background: 'rgba(0,0,0,0.25)',
-        borderRadius: '4px 16px 4px 4px',
-        borderLeft: `3px solid ${color}`,
-        minWidth: '160px'
-      }}
-    >
-      <span style={{ fontSize: '13px', opacity: 0.6 }}>{label}</span>
-      <span style={{ fontSize: '14px', fontWeight: 'bold', marginLeft: 'auto' }}>{value}</span>
-    </div>
-  );
-}
-
-/** GS 分区标题 */
-function GsSectionTitle({ title }: { title: string }) {
-  return (
-    <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '10px 20px', boxShadow: '0 0 1px 0 rgba(255,255,255,0.3)' }}>
-      <span style={{ fontFamily: FONT_NZBZ, fontSize: '18px', color: '#d3bc8e' }}>{title}</span>
-    </div>
-  );
-}
-
-// ─── 通用分区标题 ────────────────────────────────────
+// ─── 通用分区标题 (SR 用) ────────────────────────────
 
 function SectionTitle({ title }: { title: string }) {
   return (

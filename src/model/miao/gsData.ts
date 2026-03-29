@@ -53,6 +53,7 @@ export interface GsCharacterData {
   elem: string;
   weapon: string;
   desc: string;
+  birthday: string;
   astro: string;
   allegiance: string;
   cncv: string;
@@ -154,6 +155,7 @@ export function loadGsCharacter(name: string): GsCharacterData | null {
     elem: raw.elem ?? '',
     weapon: raw.weapon ?? '',
     desc: raw.desc ?? '',
+    birthday: raw.birth ?? '',
     astro: raw.astro ?? '',
     allegiance: raw.allegiance ?? '',
     cncv: raw.cncv ?? '',
