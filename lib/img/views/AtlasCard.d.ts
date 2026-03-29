@@ -1,3 +1,4 @@
+import type { GsCharacterData } from '@src/model/miao/gsData.js';
 import type { SrCharacterData } from '@src/model/miao/srData.js';
 import React from 'react';
 export interface AtlasCardData {
@@ -9,6 +10,7 @@ export interface AtlasCardData {
     weaponType?: string;
     faceImg?: string;
     srData?: SrCharacterData;
+    gsData?: GsCharacterData;
     elementIcon?: string;
     pathIcon?: string;
     starIcon?: string;
