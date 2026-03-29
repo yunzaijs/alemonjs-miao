@@ -22,5 +22,12 @@ export declare const miaoRouteRules: {
     readonly avatarCard: RegExp;
     readonly avatarWife: RegExp;
     readonly profileImgManage: RegExp;
+    readonly weapon: RegExp;
+    readonly weaponWiki: RegExp;
+    readonly charMaterial: RegExp;
+    readonly charArtis: RegExp;
+    readonly roleCard: RegExp;
+    readonly gameCard: RegExp;
+    readonly version: RegExp;
     readonly admin: RegExp;
 };
