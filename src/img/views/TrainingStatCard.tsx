@@ -4,7 +4,7 @@
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, fetterStyle, formatDateZh } from './shared.js';
+import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, contStyle, contTitleStyle, fetterStyle, formatDateZh } from './shared.js';
 
 // ─── 统计条 ─────────────────────────────────────────
 
@@ -172,49 +172,29 @@ export default function TrainingStatCard({ data }: Props) {
   });
 
   return (
-    <HTML style={{ width: '680px' }}>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '680px',
+          width: '600px',
           fontFamily: FONT_FAMILY,
           fontSize: '16px',
-          color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
-          backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          color: '#fff',
+          background: '#2a3860'
         }}
       >
         <div
           style={{
-            width: '680px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            width: '600px',
+            padding: '5px 0 10px 5px'
           }}
         >
-          {/* head-box */}
-          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
-            <div
-              style={{
-                fontFamily: FONT_NZBZ,
-                fontSize: '36px',
-                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-              }}
-            >
-              #练度统计
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginLeft: '10px',
-                  fontSize: '16px',
-                  fontFamily: FONT_FAMILY,
-                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-                }}
-              >
+          {/* head-box — stat style */}
+          <div style={{ display: 'flex', width: '100%', padding: '10px 0' }}>
+            <div style={{ width: '70%' }}>
+              <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px', paddingBottom: '10px' }}>#练度统计</div>
+              <div style={{ fontSize: '16px' }}>
                 {nickname} · UID:{uid}
-              </span>
+              </div>
             </div>
           </div>
 

@@ -19,11 +19,14 @@ import URL_BG_SR from '@src/assets/common/bg/bg-sr.webp';
 import URL_CARD_BG from '@src/assets/common/card-bg.png';
 import URL_CROWN from '@src/assets/common/crown.png';
 import URL_STAT_ICON from '@src/assets/common/icon.png';
+import URL_ITEM_BG3 from '@src/assets/common/item/bg3.png';
+import URL_ITEM_BG4 from '@src/assets/common/item/bg4.png';
+import URL_ITEM_BG5 from '@src/assets/common/item/bg5.png';
 import URL_FETTER from '@src/assets/common/item/fetter.png';
 import URL_MAIN01 from '@src/assets/common/main-01.png';
 import URL_MARK_ICON from '@src/assets/common/mark-icon.png';
 
-export { URL_BG01, URL_CARD_BG, URL_CROWN, URL_FETTER, URL_MAIN01, URL_MARK_ICON, URL_STAT_ICON };
+export { URL_BG01, URL_CARD_BG, URL_CROWN, URL_FETTER, URL_ITEM_BG3, URL_ITEM_BG4, URL_ITEM_BG5, URL_MAIN01, URL_MARK_ICON, URL_STAT_ICON };
 
 // ─── 元素 → 背景图映射 ──────────────────────────────
 

@@ -3,7 +3,6 @@
  * 命令: #喵喵设置 / #喵喵更新 / #喵喵更新攻略资源 / #喵喵api
  */
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
-import { queryMihoyoApi } from 'alemonjs-mhy';
 
 type AdminAction = 'config' | 'updatePlugin' | 'updateRes' | 'updateImage' | 'apiInfo' | 'bgHelp' | 'updateLog';
 
@@ -63,7 +62,7 @@ const BG_HELP_TEXT = [
   '#喵喵背景设置面板模糊[0-50] — 设置面板背景图模糊度'
 ].join('\n');
 
-export default async (e: EventsEnum) => {
+export default (e: EventsEnum) => {
   const event = createEvent({
     event: e,
     selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
@@ -88,32 +87,10 @@ export default async (e: EventsEnum) => {
     return;
   }
 
-  const result = await queryMihoyoApi({
-    userId,
-    game: 'gs',
-    api: `admin_${action}`,
-    query: params
-  });
-
   const format = Format.create();
+  const md = Format.createMarkdown();
 
-  if (result.success) {
-    const data = result.data as { message?: string; image?: string };
-
-    if (data.image) {
-      format.addImage(data.image);
-    } else {
-      const md = Format.createMarkdown();
-
-      md.addText(data.message ?? '操作成功');
-      format.addMarkdown(md);
-    }
-  } else {
-    const md = Format.createMarkdown();
-
-    md.addText(`[管理] ${result.message}`);
-    format.addMarkdown(md);
-  }
-
+  md.addText('[管理] 管理功能暂未实现');
+  format.addMarkdown(md);
   void message.send({ format });
 };

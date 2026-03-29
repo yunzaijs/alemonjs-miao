@@ -67,10 +67,10 @@ export default function CalendarCard({ data }: Props) {
   const upcomingItems = data.activities.filter(a => !a.isActive);
 
   return (
-    <HTML style={{ width: '550px' }}>
+    <HTML style={{ width: '740px' }}>
       <div
         style={{
-          width: '550px',
+          width: '740px',
           fontFamily: FONT_FAMILY,
           fontSize: '16px',
           color: '#1e1f20',
@@ -81,7 +81,7 @@ export default function CalendarCard({ data }: Props) {
       >
         <div
           style={{
-            width: '550px',
+            width: '740px',
             padding: '20px 15px 10px 15px',
             backgroundImage: `url(${URL_MAIN01})`,
             backgroundSize: 'contain',

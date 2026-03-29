@@ -2,8 +2,10 @@
  * 老婆/老公系统 — 随机展示、设置、查询角色卡片
  * 命令: #老婆 / #老公 / #老婆设置xxx / #老婆列表
  */
+import AvatarCard, { type AvatarCardData, type AvatarInfo } from '@src/img/views/AvatarCard';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
 import { getUserMainUid, queryMihoyoApi } from 'alemonjs-mhy';
+import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 const RELATION_MAP: Record<string, { keywords: string[]; type: number }> = {
   wife: { keywords: ['老婆', '媳妇', '妻子', '娘子', '宝贝'], type: 0 },
@@ -106,15 +108,14 @@ export default async (e: EventsEnum) => {
       }
 
       logger.debug('[avatarWife] 调用 queryMihoyoApi', {
-        api: 'avatarWife',
+        api: 'character',
         relationType: relation.type,
         action
       });
       const result = await queryMihoyoApi({
         userId,
         game,
-        api: 'avatarWife',
-        query: { relationType: relation.type, action }
+        api: 'character'
       });
 
       logger.debug('[avatarWife] API 返回', {
@@ -130,17 +131,44 @@ export default async (e: EventsEnum) => {
 
         md.addText(`[${relation.keywords[0]}] ${result.message}`);
         format.addMarkdown(md);
+        void message.send({ format });
+
+        return;
+      }
+
+      const raw = result.data as { avatars?: AvatarInfo[] };
+      const avatars = raw.avatars ?? [];
+
+      if (avatars.length === 0) {
+        const md = Format.createMarkdown();
+
+        md.addText('未获取到角色数据');
+        format.addMarkdown(md);
+        void message.send({ format });
+
+        return;
+      }
+
+      // 根据 relationType 筛选性别偏好(简单按元素区分不准确，直接随机)
+      const picked = avatars[Math.floor(Math.random() * avatars.length)];
+
+      const cardData: AvatarCardData = {
+        uid: result.uid ?? uid,
+        game,
+        title: relation.keywords[0],
+        relation: relation.keywords[0],
+        avatar: picked
+      };
+
+      const img = await renderComponentIsHtmlToBuffer(AvatarCard, { data: cardData });
+
+      if (typeof img === 'boolean') {
+        const md = Format.createMarkdown();
+
+        md.addText(`你的${relation.keywords[0]}是 ${picked.name}`);
+        format.addMarkdown(md);
       } else {
-        const data = result.data as { image?: string; name?: string };
-
-        if (data.image) {
-          format.addImage(data.image);
-        } else {
-          const md = Format.createMarkdown();
-
-          md.addText(data.name ? `你的${relation.keywords[0]}是 ${data.name}` : '未能找到适合展示的角色..');
-          format.addMarkdown(md);
-        }
+        format.addImage(img);
       }
 
       void message.send({ format });
@@ -150,45 +178,10 @@ export default async (e: EventsEnum) => {
 
     case 'set':
     case 'add': {
-      if (!param) {
-        const format = Format.create();
-        const md = Format.createMarkdown();
-
-        md.addText(`请输入要${action === 'set' ? '设置' : '添加'}的角色名，多个角色用逗号分隔`);
-        format.addMarkdown(md);
-        void message.send({ format });
-
-        return;
-      }
-
-      const names = param
-        .replace(/[，、;；]/g, ',')
-        .split(',')
-        .filter(Boolean);
-
-      const result = await queryMihoyoApi({
-        userId,
-        game,
-        api: 'avatarWifeSet',
-        query: {
-          relationType: relation.type,
-          relationKey: relation.key,
-          names,
-          append: action === 'add'
-        }
-      });
-
       const format = Format.create();
       const md = Format.createMarkdown();
 
-      if (result.success) {
-        const data = result.data as { list: string[] };
-
-        md.addText(`${relation.keywords[0]}已经设置：${data.list.join('，')}`);
-      } else {
-        md.addText(result.message);
-      }
-
+      md.addText(`${relation.keywords[0]}设置功能暂未开放，请直接发送 #${relation.keywords[0]} 随机一位角色`);
       format.addMarkdown(md);
       void message.send({ format });
 
@@ -196,28 +189,10 @@ export default async (e: EventsEnum) => {
     }
 
     case 'list': {
-      const result = await queryMihoyoApi({
-        userId,
-        game,
-        api: 'avatarWifeList',
-        query: { relationKey: relation.key }
-      });
-
       const format = Format.create();
       const md = Format.createMarkdown();
 
-      if (result.success) {
-        const data = result.data as { list: string[] };
-
-        if (data.list.length > 0) {
-          md.addText(`你的${relation.keywords[0]}是：${data.list.join('，')}`);
-        } else {
-          md.addText(`尚未设置，发送 #${relation.keywords[0]}设置+角色名 来设置`);
-        }
-      } else {
-        md.addText(result.message);
-      }
-
+      md.addText(`${relation.keywords[0]}列表功能暂未开放，请直接发送 #${relation.keywords[0]} 随机一位角色`);
       format.addMarkdown(md);
       void message.send({ format });
     }

@@ -2,8 +2,11 @@
  * 角色资料/图鉴 — 查看角色天赋、命座、资料
  * 命令: #胡桃资料 / #胡桃天赋 / #胡桃命座
  */
+import { getCharacterFace } from '@src/assets/character/index.js';
+import CharWikiCard, { type CharWikiData } from '@src/img/views/CharWikiCard';
+import { GS_CHARACTERS } from '@src/model/miao/characters.js';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
-import { queryMihoyoApi } from 'alemonjs-mhy';
+import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 type WikiMode = 'wiki' | 'talent' | 'cons';
 
@@ -25,11 +28,23 @@ function parseCharName(text: string): string {
   return match?.[1]?.trim() ?? '';
 }
 
-const MODE_LABELS: Record<WikiMode, string> = {
-  wiki: '资料',
-  talent: '天赋',
-  cons: '命座'
-};
+/** 根据名称或简称查找角色 */
+function findCharByName(name: string) {
+  for (const [, meta] of Object.entries(GS_CHARACTERS)) {
+    if (meta.name === name || meta.abbr === name) {
+      return meta;
+    }
+  }
+
+  // 包含匹配
+  for (const [, meta] of Object.entries(GS_CHARACTERS)) {
+    if (meta.name.includes(name) || name.includes(meta.name)) {
+      return meta;
+    }
+  }
+
+  return null;
+}
 
 export default async (e: EventsEnum) => {
   const event = createEvent({
@@ -39,7 +54,6 @@ export default async (e: EventsEnum) => {
 
   const [message] = useMessage(event);
   const text = e.MessageText;
-  const game = e.miao?.game ?? 'gs';
 
   const charName = parseCharName(text);
 
@@ -57,52 +71,41 @@ export default async (e: EventsEnum) => {
   }
 
   const mode = parseMode(text);
+  const char = findCharByName(charName);
 
-  logger.debug('[charWiki] 进入', { charName, mode, game });
+  logger.debug('[charWiki] 进入', { charName, mode, found: !!char });
 
-  const result = await queryMihoyoApi({
-    userId: event.UserId,
-    game,
-    api: 'charWiki',
-    query: { name: charName, mode }
-  });
+  if (!char) {
+    const format = Format.create();
+    const md = Format.createMarkdown();
 
-  logger.debug('[charWiki] API 返回', { success: result.success });
+    md.addText(`未找到角色「${charName}」，请检查名称`);
+    format.addMarkdown(md);
+    void message.send({ format });
 
+    return;
+  }
+
+  const cardData: CharWikiData = {
+    name: char.name,
+    abbr: char.abbr,
+    element: char.element,
+    rarity: char.rarity,
+    weaponType: char.weaponType,
+    faceImg: getCharacterFace('gs', char.name),
+    mode
+  };
+
+  const img = await renderComponentIsHtmlToBuffer(CharWikiCard, { data: cardData });
   const format = Format.create();
 
-  if (!result.success) {
+  if (typeof img === 'boolean') {
     const md = Format.createMarkdown();
 
-    md.addText(`未找到角色「${charName}」的${MODE_LABELS[mode]}数据`);
+    md.addText('[角色资料] 图片渲染失败');
     format.addMarkdown(md);
   } else {
-    const md = Format.createMarkdown();
-    const data = result.data as Record<string, unknown>;
-
-    md.addTitle(`${charName} · ${MODE_LABELS[mode]}`);
-
-    if (mode === 'wiki') {
-      if (data.desc) {
-        md.addText(String(data.desc));
-      }
-    } else if (mode === 'talent') {
-      const talents = (data.talents as Array<{ name: string; desc: string }>) ?? [];
-
-      for (const t of talents) {
-        md.addSubtitle(t.name);
-        md.addText(t.desc);
-      }
-    } else {
-      const consList = (data.cons as Array<{ name: string; desc: string }>) ?? [];
-
-      for (const c of consList) {
-        md.addSubtitle(c.name);
-        md.addText(c.desc);
-      }
-    }
-
-    format.addMarkdown(md);
+    format.addImage(img);
   }
 
   void message.send({ format });

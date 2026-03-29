@@ -1,9 +1,11 @@
 /**
- * 角色卡片 — 查看角色卡片信息
+ * 角色卡片 — 查看所有角色卡片信息
  * 命令: #喵喵角色卡片
  */
+import AvatarCard, { type AvatarCardData, type AvatarInfo } from '@src/img/views/AvatarCard';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
 import { getUserMainUid, queryMihoyoApi } from 'alemonjs-mhy';
+import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 export default async (e: EventsEnum) => {
   const event = createEvent({
@@ -34,13 +36,12 @@ export default async (e: EventsEnum) => {
     return;
   }
 
-  logger.debug('[avatarCard] 调用 queryMihoyoApi', { api: 'avatarCard', uid });
+  logger.debug('[avatarCard] 调用 queryMihoyoApi', { api: 'character' });
 
   const result = await queryMihoyoApi({
     userId,
     game,
-    api: 'avatarCard',
-    query: { uid }
+    api: 'character'
   });
 
   logger.debug('[avatarCard] API 返回', { success: result.success, message: result.message });
@@ -52,17 +53,40 @@ export default async (e: EventsEnum) => {
 
     md.addText(`[角色卡片] ${result.message}`);
     format.addMarkdown(md);
+    void message.send({ format });
+
+    return;
+  }
+
+  const raw = result.data as { avatars?: AvatarInfo[] };
+  const avatars = raw.avatars ?? [];
+
+  if (avatars.length === 0) {
+    const md = Format.createMarkdown();
+
+    md.addText('未获取到角色数据，请确认米游社数据已公开');
+    format.addMarkdown(md);
+    void message.send({ format });
+
+    return;
+  }
+
+  const cardData: AvatarCardData = {
+    uid: result.uid ?? uid,
+    game,
+    title: '角色卡片',
+    avatars
+  };
+
+  const img = await renderComponentIsHtmlToBuffer(AvatarCard, { data: cardData });
+
+  if (typeof img === 'boolean') {
+    const md = Format.createMarkdown();
+
+    md.addText('[角色卡片] 图片渲染失败');
+    format.addMarkdown(md);
   } else {
-    const data = result.data as { image?: string; summary?: string };
-
-    if (data.image) {
-      format.addImage(data.image);
-    } else {
-      const md = Format.createMarkdown();
-
-      md.addText(data.summary ?? '暂无角色卡片数据');
-      format.addMarkdown(md);
-    }
+    format.addImage(img);
   }
 
   void message.send({ format });

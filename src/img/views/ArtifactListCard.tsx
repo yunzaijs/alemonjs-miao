@@ -155,10 +155,10 @@ export default function ArtifactListCard({ data }: Props) {
     .sort((a, b) => b.score.totalMark - a.score.totalMark);
 
   return (
-    <HTML style={{ width: '700px' }}>
+    <HTML style={{ width: '660px' }}>
       <div
         style={{
-          width: '700px',
+          width: '660px',
           fontFamily: FONT_FAMILY,
           fontSize: '18px',
           color: '#1e1f20',
@@ -169,7 +169,7 @@ export default function ArtifactListCard({ data }: Props) {
       >
         <div
           style={{
-            width: '700px',
+            width: '660px',
             padding: '20px 15px 10px 15px',
             backgroundImage: `url(${URL_MAIN01})`,
             backgroundSize: 'contain',

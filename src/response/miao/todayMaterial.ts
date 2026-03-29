@@ -2,9 +2,10 @@
  * 今日素材 — 查看今日/明日可刷取素材
  * 命令: #今日素材 / #明日天赋 / #周一素材
  */
+import MaterialCard, { type MaterialCardData } from '@src/img/views/MaterialCard';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
-import { queryMihoyoApi } from 'alemonjs-mhy';
 import dayjs from 'dayjs';
+import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 function parseDayOffset(text: string): number {
   if (/明[日天]/.test(text)) {
@@ -40,6 +41,20 @@ function parseDayOffset(text: string): number {
   return 0;
 }
 
+function getDayLabel(offset: number): string {
+  if (offset === 0) {
+    return '今日';
+  }
+  if (offset === 1) {
+    return '明日';
+  }
+
+  const target = dayjs().add(offset, 'day');
+  const dayNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+  return dayNames[target.day()] ?? '今日';
+}
+
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
@@ -48,39 +63,30 @@ export default async (e: EventsEnum) => {
 
   const [message] = useMessage(event);
   const text = e.MessageText;
-  const game = e.miao?.game ?? 'gs';
 
   const dayOffset = parseDayOffset(text);
+  const targetDay = dayjs().add(dayOffset, 'day');
+  const weekday = targetDay.day();
 
-  logger.debug('[todayMaterial] 进入', { game, dayOffset });
+  logger.debug('[todayMaterial] 进入', { dayOffset, weekday });
 
-  const result = await queryMihoyoApi({
-    userId: event.UserId,
-    game,
-    api: 'todayMaterial',
-    query: { dayOffset }
-  });
+  const cardData: MaterialCardData = {
+    game: 'gs',
+    weekday,
+    dayLabel: getDayLabel(dayOffset)
+  };
 
-  logger.debug('[todayMaterial] API 返回', { success: result.success });
+  const img = await renderComponentIsHtmlToBuffer(MaterialCard, { data: cardData });
 
   const format = Format.create();
 
-  if (!result.success) {
+  if (typeof img === 'boolean') {
     const md = Format.createMarkdown();
 
-    md.addText(`[素材] ${result.message}`);
+    md.addText('[素材] 图片渲染失败');
     format.addMarkdown(md);
   } else {
-    const data = result.data as { image?: string; summary?: string };
-
-    if (data.image) {
-      format.addImage(data.image);
-    } else {
-      const md = Format.createMarkdown();
-
-      md.addText(data.summary ?? '暂无素材数据');
-      format.addMarkdown(md);
-    }
+    format.addImage(img);
   }
 
   void message.send({ format });

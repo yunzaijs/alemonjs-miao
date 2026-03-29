@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, contStyle } from './shared.js';
 
 // ─── 类型定义 ────────────────────────────────────────
 
@@ -99,50 +99,31 @@ export default function HardChallengeCard({ data }: { data: HardChallengeData })
   const diffLabel = diff > 0 ? `${DIFFICULTY_ROMAN[diff] ?? diff} · ${DIFFICULTY_NAMES[diff] ?? '未知'}` : '未挑战';
 
   return (
-    <HTML style={{ width: '700px' }}>
+    <HTML style={{ width: '840px' }}>
       <div
         style={{
-          width: '700px',
+          width: '840px',
           fontFamily: FONT_FAMILY,
           fontSize: '16px',
-          color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
-          backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          color: '#fff',
+          background: '#23212d'
         }}
       >
         <div
           style={{
-            width: '700px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            width: '840px',
+            padding: '5px 0 10px 5px'
           }}
         >
           {/* head-box */}
-          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
-            <div
-              style={{
-                fontFamily: FONT_NZBZ,
-                fontSize: '36px',
-                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-              }}
-            >
-              幽境危战
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginLeft: '10px',
-                  fontSize: '16px',
-                  fontFamily: FONT_FAMILY,
-                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-                }}
-              >
-                UID:{data.uid} · {diffLabel}
-              </span>
+          <div style={{ display: 'flex', width: '100%', padding: '10px 0' }}>
+            <div style={{ width: '70%' }}>
+              <div style={{ fontFamily: FONT_NZBZ, fontSize: '45px', paddingBottom: '10px' }}>#幽境危战</div>
             </div>
+            <div style={{ width: '30%', textAlign: 'right', paddingTop: '25px', paddingRight: '10px', fontSize: '25px' }}>UID:{data.uid}</div>
+          </div>
+          <div style={{ padding: '0 20px', fontSize: '18px' }}>
+            统计周期：{data.schedule?.start_time} - {data.schedule?.end_time}
           </div>
 
           {!data.has_data ? (
@@ -151,68 +132,102 @@ export default function HardChallengeCard({ data }: { data: HardChallengeData })
             </div>
           ) : (
             <>
-              {/* 总览 */}
+              {/* 总览 — hard-stat-cont */}
               {(data.schedule || data.best?.has_data) && (
-                <div style={contStyle()}>
-                  <div style={contTitleStyle()}>总览</div>
-                  <div style={{ padding: '8px 15px' }}>
-                    {data.schedule && (
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          padding: '6px 0',
-                          color: '#fff',
-                          fontSize: '14px',
-                          borderBottom: '1px solid rgba(255,255,255,0.1)'
-                        }}
-                      >
-                        <span style={{ color: '#d3bc8e' }}>周期</span>
-                        <span>
-                          {data.schedule.start_time} ~ {data.schedule.end_time}
-                        </span>
-                      </div>
-                    )}
+                <div style={{ margin: '0 20px 10px', background: 'rgba(0,0,0,0.3)', borderRadius: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', padding: '5px 10px', height: '57px', justifyContent: 'space-between' }}>
+                    <div style={{ padding: '5px 10px', fontFamily: FONT_NZBZ, fontSize: '20px' }}>最佳纪录</div>
                     {data.best?.has_data && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', color: '#fff', fontSize: '14px' }}>
-                        <span style={{ color: '#d3bc8e' }}>最佳用时</span>
-                        <span style={{ fontWeight: 'bold' }}>{formatTime(data.best.second)}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '20px' }}>{diffLabel}</span>
+                        <span style={{ fontSize: '20px' }}>{formatTime(data.best.second)}</span>
                       </div>
                     )}
                   </div>
                 </div>
               )}
 
-              {/* 各关卡 */}
+              {/* 各关卡 — hard-chall-team layout */}
               {data.challs.map((chall, ci) => (
                 <div key={ci} style={contStyle()}>
-                  <div style={contTitleStyle({ display: 'flex', justifyContent: 'space-between' })}>
-                    <span>{chall.name}</span>
-                    <span style={{ fontWeight: 'normal', fontSize: '13px' }}>用时 {formatTime(chall.second)}</span>
-                  </div>
-                  <div style={{ padding: '8px 15px' }}>
-                    {chall.monster && <div style={{ fontSize: '13px', color: '#d3bc8e', marginBottom: '6px' }}>Lv.{chall.monster.level}</div>}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
-                      {chall.avatars.map((a, ai) => (
-                        <span
-                          key={ai}
-                          style={{
-                            fontSize: '13px',
-                            padding: '3px 10px',
-                            borderRadius: '4px',
-                            background: 'rgba(0,0,0,0.3)',
-                            color: RARITY_COLORS[a.rarity] ?? '#fff'
-                          }}
-                        >
-                          {a.name} Lv.{a.level}
-                          {a.rank > 0 && <span style={{ fontSize: '11px', color: '#d3bc8e', marginLeft: '2px' }}>C{a.rank}</span>}
-                        </span>
-                      ))}
+                  <div style={{ padding: '11px' }}>
+                    {/* hard-title */}
+                    <div
+                      style={{
+                        margin: '-3px 0 8px 3px',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'space-between',
+                        color: '#d3bc8e',
+                        fontSize: '22px',
+                        fontFamily: FONT_NZBZ,
+                        fontWeight: 'normal'
+                      }}
+                    >
+                      <div>{chall.name}</div>
+                      <div style={{ fontSize: '20px', fontFamily: FONT_FAMILY }}>
+                        <span>战斗用时：</span>
+                        {formatTime(chall.second)}
+                      </div>
                     </div>
-                    {chall.best_avatars.length > 0 && (
-                      <div style={{ display: 'flex', gap: '12px', fontSize: '13px' }}>
-                        {chall.best_avatars[0] && <span style={{ color: '#e8a040' }}>最强一击: {formatDps(chall.best_avatars[0].dps)}</span>}
-                        {chall.best_avatars[1] && <span style={{ color: '#60b0e0' }}>最高总伤害: {formatDps(chall.best_avatars[1].dps)}</span>}
+                    {/* hard-chall-team */}
+                    <div style={{ display: 'flex' }}>
+                      {/* hard-team — avatars */}
+                      <div style={{ display: 'flex', marginRight: '-5px', marginLeft: '-5px', gap: '4px' }}>
+                        {chall.avatars.map((a, ai) => (
+                          <div
+                            key={ai}
+                            style={{
+                              fontSize: '13px',
+                              padding: '3px 10px',
+                              borderRadius: '4px',
+                              background: 'rgba(0,0,0,0.3)',
+                              color: RARITY_COLORS[a.rarity] ?? '#fff'
+                            }}
+                          >
+                            {a.name} Lv.{a.level}
+                            {a.rank > 0 && <span style={{ fontSize: '11px', color: '#d3bc8e', marginLeft: '2px' }}>C{a.rank}</span>}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ width: '1px', background: 'rgba(255,255,255,0.5)', height: '80px', margin: '15px 8px 0' }} />
+                      {/* hard-info — best damage */}
+                      <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                        {chall.monster && <div style={{ fontSize: '13px', color: '#d3bc8e', marginBottom: '6px' }}>Lv.{chall.monster.level}</div>}
+                        {chall.best_avatars.length > 0 && (
+                          <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                              {chall.best_avatars[0] && (
+                                <div style={{ background: '#e7e5d9', borderRadius: '10px', overflow: 'hidden', flex: 1 }}>
+                                  <div style={{ background: '#8b8b83', padding: '5px', fontSize: '18px', color: '#fff' }}>最强一击</div>
+                                  <div style={{ padding: '5px', color: '#0d0d0d', fontSize: '20px', fontWeight: 'bold', textAlign: 'center' }}>
+                                    {formatDps(chall.best_avatars[0].dps)}
+                                  </div>
+                                </div>
+                              )}
+                              {chall.best_avatars[1] && (
+                                <div style={{ background: '#e7e5d9', borderRadius: '10px', overflow: 'hidden', flex: 1 }}>
+                                  <div style={{ background: '#8b8b83', padding: '5px', fontSize: '18px', color: '#fff' }}>最高总伤害</div>
+                                  <div style={{ padding: '5px', color: '#0d0d0d', fontSize: '20px', fontWeight: 'bold', textAlign: 'center' }}>
+                                    {formatDps(chall.best_avatars[1].dps)}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {/* hard-chall-desc */}
+                    {chall.monster?.desc && chall.monster.desc.length > 0 && (
+                      <div style={{ margin: '3px 0' }}>
+                        <ul style={{ listStylePosition: 'inside' }}>
+                          {chall.monster.desc.map((d, di) => (
+                            <li key={di} style={{ fontSize: '15px' }}>
+                              {d}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </div>
@@ -221,20 +236,11 @@ export default function HardChallengeCard({ data }: { data: HardChallengeData })
             </>
           )}
 
-          <div
-            style={{
-              display: 'flex',
-              background: 'rgba(0,0,0,0.4)',
-              width: '100%',
-              padding: '10px 15px',
-              fontSize: '12px',
-              color: '#fff',
-              borderRadius: '0 0 10px 10px',
-              margin: '5px 10px'
-            }}
-          >
-            <span style={{ width: '50%' }}>数据来源: 米游社</span>
-            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
+          {/* notice */}
+          <div style={contStyle()}>
+            <div style={{ padding: '10px 15px', fontSize: '16px' }}>
+              <div>角色装备与圣遗物为当前最新状态</div>
+            </div>
           </div>
 
           <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, contStyle, contTitleStyle } from './shared.js';
 
 // ─── 类型定义 ────────────────────────────────────────
 
@@ -69,25 +69,6 @@ export interface RoleCombatData {
 
 // ─── 样式 ────────────────────────────────────────────
 
-function StatRow({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '6px 0',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        color: '#fff',
-        fontSize: '14px'
-      }}
-    >
-      <span style={{ color: '#d3bc8e' }}>{label}</span>
-      <span style={{ fontWeight: 'bold' }}>{value}</span>
-    </div>
-  );
-}
-
 // ─── 主组件 ──────────────────────────────────────────
 
 export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
@@ -105,50 +86,33 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
   }
 
   return (
-    <HTML style={{ width: '700px' }}>
+    <HTML style={{ width: '970px' }}>
       <div
         style={{
-          width: '700px',
+          width: '970px',
           fontFamily: FONT_FAMILY,
           fontSize: '16px',
-          color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
-          backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          color: '#fff',
+          background: '#151214'
         }}
       >
         <div
           style={{
-            width: '700px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            width: '970px',
+            padding: '5px 0 10px 5px'
           }}
         >
-          {/* head-box */}
-          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
-            <div
-              style={{
-                fontFamily: FONT_NZBZ,
-                fontSize: '36px',
-                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-              }}
-            >
-              幻想真境剧诗
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginLeft: '10px',
-                  fontSize: '16px',
-                  fontFamily: FONT_FAMILY,
-                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
-                }}
-              >
-                UID:{data.uid}
-              </span>
+          {/* head-box — flex 70/30 */}
+          <div style={{ display: 'flex', width: '100%', padding: '10px 0' }}>
+            <div style={{ width: '70%' }}>
+              <div style={{ fontFamily: FONT_NZBZ, fontSize: '45px', paddingBottom: '10px' }}>
+                #幻想真境剧诗
+                {stat && (
+                  <span style={{ fontSize: '30px', marginLeft: '10px', color: '#d3bc8e' }}>{schedule ? `${schedule.start_date_time.month}月` : ''}</span>
+                )}
+              </div>
             </div>
+            <div style={{ width: '30%', textAlign: 'right', paddingTop: '25px', paddingRight: '10px', fontSize: '25px' }}>UID:{data.uid}</div>
           </div>
 
           {noData ? (
@@ -161,41 +125,64 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
             </div>
           ) : (
             <>
-              {/* 统计 */}
-              <div style={contStyle()}>
-                <div style={contTitleStyle()}>挑战统计</div>
-                <div style={{ padding: '8px 15px' }}>
+              {/* 演出回顾 — role-stat-cont */}
+              <div style={{ width: '100%', padding: '40px 80px', background: 'rgba(0,0,0,0.3)', borderRadius: '10px', margin: '10px 0' }}>
+                <div style={{ color: '#d3bc8e', fontSize: '43px', lineHeight: '35px', textAlign: 'center', fontFamily: FONT_NZBZ, marginBottom: '30px' }}>
+                  演出回顾
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', color: '#ccc', margin: '30px 25px 0' }}>
                   {schedule && (
-                    <StatRow
-                      label='周期'
-                      value={
-                        // eslint-disable-next-line no-useless-concat
-                        `${schedule.start_date_time.month}/${schedule.start_date_time.day}` + ` ~ ${schedule.end_date_time.month}/${schedule.end_date_time.day}`
-                      }
-                    />
+                    <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                      <div style={{ width: '50%' }}>周期</div>
+                      <div style={{ width: '100%', fontSize: '26px', display: 'flex', justifyContent: 'flex-end' }}>
+                        {schedule.start_date_time.month}/{schedule.start_date_time.day} ~ {schedule.end_date_time.month}/{schedule.end_date_time.day}
+                      </div>
+                    </div>
                   )}
                   {stat && (
                     <>
-                      <StatRow label='最深幕数' value={`第${stat.max_round_id}幕`} />
-                      <StatRow label='异端值' value={stat.heresy_count} />
-                      <StatRow label='获取金币' value={stat.coin_num} />
-                      <StatRow label='助战次数' value={`${stat.rent_cnt}次`} />
+                      <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                        <div style={{ width: '50%' }}>最深幕数</div>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>第{stat.max_round_id}幕</div>
+                      </div>
+                      <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                        <div style={{ width: '50%' }}>异端值</div>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>{stat.heresy_count}</div>
+                      </div>
+                      <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                        <div style={{ width: '50%' }}>消耗幻剧之花</div>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>{stat.coin_num}</div>
+                      </div>
+                      <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                        <div style={{ width: '50%' }}>场外观众声援</div>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>{stat.avatar_bonus_num} 次</div>
+                      </div>
+                      <div style={{ display: 'flex', width: '100%', height: '76px', alignItems: 'center', fontSize: '26px' }}>
+                        <div style={{ width: '50%' }}>支援其他玩家</div>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>{stat.rent_cnt} 次</div>
+                      </div>
                     </>
                   )}
                 </div>
               </div>
 
-              {/* 各幕阵容 */}
-              {detail && detail.rounds_data.length > 0 && (
-                <div style={contStyle()}>
-                  <div style={contTitleStyle()}>各幕阵容</div>
-                  <div style={{ padding: '8px 15px' }}>
-                    {detail.rounds_data.map((round, ri) => (
-                      <div key={ri} style={{ padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#d3bc8e' }}>第{round.round_id}幕</span>
-                          {round.is_get_medal && <span style={{ fontSize: '14px', color: '#c6923a' }}>✦ 勋章</span>}
-                        </div>
+              {/* 各幕阵容 — role-title + role-team */}
+              {detail &&
+                detail.rounds_data.length > 0 &&
+                detail.rounds_data.map((round, ri) => (
+                  <div key={ri} style={contStyle()}>
+                    <div style={{ padding: '11px' }}>
+                      {/* role-title */}
+                      <div style={{ margin: '-3px 0 8px', display: 'flex', alignItems: 'flex-end' }}>
+                        {round.is_get_medal && <span style={{ fontSize: '14px', color: '#c6923a', marginRight: '4px' }}>✦</span>}
+                        <strong
+                          style={{ marginLeft: '3px', color: '#d3bc8e', fontSize: '18px', fontFamily: FONT_NZBZ, fontWeight: 'normal', marginRight: '10px' }}
+                        >
+                          第{round.round_id}幕
+                        </strong>
+                      </div>
+                      {/* role-team — avatars */}
+                      <div style={{ display: 'flex', gap: '10px' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {round.avatars.map((a, ai) => (
                             <span
@@ -213,10 +200,9 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
                           ))}
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
 
               {/* 候选角色 */}
               {detail && detail.backup_avatars.length > 0 && (
@@ -243,20 +229,12 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
             </>
           )}
 
-          <div
-            style={{
-              display: 'flex',
-              background: 'rgba(0,0,0,0.4)',
-              width: '100%',
-              padding: '10px 15px',
-              fontSize: '12px',
-              color: '#fff',
-              borderRadius: '0 0 10px 10px',
-              margin: '5px 10px'
-            }}
-          >
-            <span style={{ width: '50%' }}>数据来源: 米游社</span>
-            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
+          {/* notice */}
+          <div style={contStyle()}>
+            <div style={{ padding: '10px 15px', fontSize: '16px' }}>
+              <div>各关卡按照挑战时间顺序展示</div>
+              <div>角色装备与圣遗物为当前最新状态</div>
+            </div>
           </div>
 
           <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
