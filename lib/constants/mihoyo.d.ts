@@ -10,4 +10,17 @@ export declare const miaoRouteRules: {
     readonly rankAdmin: RegExp;
     readonly roleCombat: RegExp;
     readonly hardChallenge: RegExp;
+    readonly charWiki: RegExp;
+    readonly strategy: RegExp;
+    readonly banner: RegExp;
+    readonly gachaDetail: RegExp;
+    readonly gachaStat: RegExp;
+    readonly abyss: RegExp;
+    readonly abyssStat: RegExp;
+    readonly abyssUsage: RegExp;
+    readonly todayMaterial: RegExp;
+    readonly avatarCard: RegExp;
+    readonly avatarWife: RegExp;
+    readonly profileImgManage: RegExp;
+    readonly admin: RegExp;
 };
