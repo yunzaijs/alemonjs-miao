@@ -46,7 +46,7 @@ function findCharByName(name: string) {
   return null;
 }
 
-export default async (e: EventsEnum) => {
+export default async (e: EventsEnum, next: () => void) => {
   const event = createEvent({
     event: e,
     selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
@@ -58,14 +58,7 @@ export default async (e: EventsEnum) => {
   const charName = parseCharName(text);
 
   if (!charName) {
-    const md = Format.createMarkdown();
-
-    md.addText('请输入角色名，如: #胡桃天赋');
-
-    const format = Format.create();
-
-    format.addMarkdown(md);
-    void message.send({ format });
+    next();
 
     return;
   }
@@ -76,12 +69,8 @@ export default async (e: EventsEnum) => {
   logger.debug('[charWiki] 进入', { charName, mode, found: !!char });
 
   if (!char) {
-    const format = Format.create();
-    const md = Format.createMarkdown();
-
-    md.addText(`未找到角色「${charName}」，请检查名称`);
-    format.addMarkdown(md);
-    void message.send({ format });
+    // 未找到角色，放行给后续路由（如图鉴查询）
+    next();
 
     return;
   }

@@ -20,12 +20,14 @@ export default (e: EventsEnum) => {
 
   logger.debug('[miao:mw] 解析游戏', { game, text });
 
-  Object.defineProperty(e, 'miao', {
-    value: { game },
-    writable: false,
-    configurable: false,
-    enumerable: true
-  });
+  if (!Object.hasOwn(e, 'miao')) {
+    Object.defineProperty(e, 'miao', {
+      value: { game },
+      writable: false,
+      configurable: false,
+      enumerable: true
+    });
+  }
 
   return true;
 };

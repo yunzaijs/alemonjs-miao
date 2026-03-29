@@ -156,6 +156,16 @@ export default defineRouter([
       {
         regular: miaoRouteRules.admin,
         handler: lazy(() => import('@src/response/miao/admin'))
+      },
+      // ─── 图鉴查询（原神 & 星铁通用） ────────────
+      {
+        regular: miaoRouteRules.atlas,
+        handler: lazy(() => import('@src/response/miao/atlas'))
+      },
+      // ─── 地图资源查询 ────────────────────────────
+      {
+        regular: miaoRouteRules.genShenMap,
+        handler: lazy(() => import('@src/response/miao/genShenMap'))
       }
     ]
   },

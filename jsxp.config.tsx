@@ -3,6 +3,7 @@ import AbyssStatCard from '@src/img/views/AbyssStatCard';
 import AbyssUsageCard from '@src/img/views/AbyssUsageCard';
 import AdminSettingsCard from '@src/img/views/AdminSettingsCard';
 import ArtifactListCard from '@src/img/views/ArtifactListCard';
+import AtlasCard from '@src/img/views/AtlasCard';
 import AvatarCard from '@src/img/views/AvatarCard';
 import BannerCard from '@src/img/views/BannerCard';
 import CalendarCard from '@src/img/views/CalendarCard';
@@ -708,6 +709,20 @@ export default defineConfig({
     },
     '/weapon-wiki': {
       component: <WeaponWikiCard data={{ name: '雾切之回光', rarity: 5, weaponType: '单手剑' }} />
+    },
+    '/atlas': {
+      component: (
+        <AtlasCard
+          data={{
+            name: '胡桃',
+            game: 'gs',
+            gameLabel: '原神',
+            element: '火',
+            rarity: 5,
+            weaponType: '长柄武器'
+          }}
+        />
+      )
     }
   }
 });
