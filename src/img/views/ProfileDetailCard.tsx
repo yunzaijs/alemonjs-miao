@@ -5,34 +5,49 @@ import { scoreArtifact, scoreCharacterArtifacts } from '@src/model/miao/artisMar
 import type { ArtifactData, ProfileAvatar, StatEntry, TalentData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { CONS_COLORS, DARK_BG, ELEMENT_COLORS, FONT_FAMILY, formatDateZh, STAR_COLORS } from './shared.js';
+import { CONS_COLORS, contStyle, contTitleStyle, ELEM_BG, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, statIconStyle, URL_CROWN } from './shared.js';
 
 // ─── 属性行 ──────────────────────────────────────────
 
 function AttrRow({ stat, idx }: { stat: StatEntry; idx: number }) {
-  const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'rgba(50,50,50,0.4)';
+  const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.4)' : 'rgba(50,50,50,0.4)';
 
   return (
     <div
       style={{
+        width: '300px',
+        fontSize: '17px',
+        listStyle: 'none',
+        height: '32px',
+        lineHeight: '32px',
+        textShadow: '0 0 1px rgba(0,0,0,0.5)',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '7px 14px',
+        paddingLeft: '3px',
         background: bgColor,
-        borderRadius: '6px',
-        marginBottom: '2px'
+        color: '#fff'
       }}
     >
-      <span style={{ fontSize: '13px', color: '#ddd' }}>{stat.name}</span>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-        <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{stat.value}</span>
-        {stat.base && stat.plus && (
-          <span style={{ fontSize: '11px', color: '#90e800' }}>
-            ({stat.base}+{stat.plus})
-          </span>
-        )}
+      <div style={{ width: '26px', padding: '8px 5px 0' }}>
+        <i style={statIconStyle(stat.key)} />
       </div>
+      <div style={{ width: '75px', textShadow: '0 0 1px rgba(0,0,0,0.8), 1px 1px 3px rgba(0,0,0,0.5)' }}>{stat.name}</div>
+      <div
+        style={{
+          width: '100px',
+          textAlign: 'right',
+          fontWeight: 'normal',
+          paddingRight: '10px',
+          textShadow: '0 0 1px rgba(0,0,0,0.8), 1px 1px 3px rgba(0,0,0,0.5)'
+        }}
+      >
+        {stat.value}
+      </div>
+      {stat.base && stat.plus && (
+        <div style={{ fontWeight: 'normal', width: '70px', textAlign: 'right', fontSize: '12px', padding: '4px 10px 0 0', background: 'rgba(0,0,0,0.2)' }}>
+          <span style={{ display: 'block', height: '13px', lineHeight: '13px', color: '#eee', fontSize: '11px' }}>{stat.base}</span>
+          <span style={{ display: 'block', height: '13px', lineHeight: '13px', color: '#90e800', fontSize: '11px' }}>+{stat.plus}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -41,7 +56,6 @@ function AttrRow({ stat, idx }: { stat: StatEntry; idx: number }) {
 
 function TalentRow({ talent, game }: { talent: TalentData; game: string }) {
   const labels = game === 'sr' ? ['普攻', '战技', '终结技'] : ['普攻', '战技', '爆发'];
-
   const items = [
     { label: labels[0], level: talent.a, key: 'a' },
     { label: labels[1], level: talent.e, key: 'e' },
@@ -49,40 +63,58 @@ function TalentRow({ talent, game }: { talent: TalentData; game: string }) {
   ];
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '10px',
-        justifyContent: 'center'
-      }}
-    >
+    <div style={{ display: 'flex', width: '300px', margin: '0 0 10px 0' }}>
       {items.map(t => {
         const isCrown = t.level >= 10;
 
         return (
-          <div
-            key={t.key}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              background: 'rgba(0,0,0,0.3)',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              minWidth: '70px'
-            }}
-          >
-            <span style={{ fontSize: '11px', color: '#aaa' }}>{t.label}</span>
-            <span
+          <div key={t.key} style={{ flex: 1, textAlign: 'center' }}>
+            <div
               style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color: isCrown ? '#ffd700' : '#fff',
-                marginTop: '2px'
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                margin: '0 auto',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(0,0,0,0.35)',
+                position: 'relative'
               }}
             >
-              {t.level}
-            </span>
+              {isCrown && (
+                <img
+                  src={URL_CROWN}
+                  style={{
+                    position: 'absolute',
+                    width: '28px',
+                    height: '28px',
+                    top: '-2px',
+                    left: '50%',
+                    marginLeft: '-14px'
+                  }}
+                />
+              )}
+              <span style={{ fontSize: '11px', color: '#ccc' }}>{t.label}</span>
+              <strong
+                style={{
+                  background: isCrown ? '#2e353e' : '#fff',
+                  color: isCrown ? '#ffdfa0' : '#000',
+                  width: '34px',
+                  height: '26px',
+                  lineHeight: '26px',
+                  fontSize: '17px',
+                  textAlign: 'center',
+                  borderRadius: '5px',
+                  boxShadow: isCrown ? '0 0 1px 0 #d3bc8e, 1px 1px 2px 0 rgba(0,0,0,0.5)' : '0 0 5px 0 #000',
+                  display: 'block',
+                  marginTop: '4px'
+                }}
+              >
+                {t.level}
+              </strong>
+            </div>
           </div>
         );
       })}
@@ -94,28 +126,31 @@ function TalentRow({ talent, game }: { talent: TalentData; game: string }) {
 
 function ConsRow({ cons }: { cons: number }) {
   return (
-    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+    <div style={{ display: 'flex', width: '250px' }}>
       {[1, 2, 3, 4, 5, 6].map(i => {
         const lit = i <= cons;
 
         return (
-          <div
-            key={i}
-            style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              background: lit ? (CONS_COLORS[cons] ?? '#d4a574') : 'rgba(80,80,80,0.5)',
-              border: `2px solid ${lit ? 'rgba(255,255,255,0.4)' : 'rgba(100,100,100,0.3)'}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: lit ? '#fff' : '#555'
-            }}
-          >
-            {i}
+          <div key={i} style={{ flex: 1 }}>
+            <div
+              style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                margin: '0 -5px',
+                background: lit ? (CONS_COLORS[cons] ?? '#d4a574') : 'rgba(80,80,80,0.5)',
+                filter: lit ? 'none' : 'grayscale(100%)',
+                opacity: lit ? 1 : 0.4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                color: '#fff'
+              }}
+            >
+              {i}
+            </div>
           </div>
         );
       })}
@@ -245,36 +280,6 @@ function ArtifactItem({ art, charName }: { art: ArtifactData; charName: string }
   );
 }
 
-// ─── 分区标题 ────────────────────────────────────────
-
-function SectionTitle({ title }: { title: string }) {
-  return (
-    <div
-      style={{
-        fontSize: '13px',
-        fontWeight: 'bold',
-        color: '#e8d5b0',
-        marginBottom: '8px',
-        paddingBottom: '4px',
-        borderBottom: '1px solid rgba(232,213,176,0.2)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px'
-      }}
-    >
-      <span
-        style={{
-          width: '3px',
-          height: '14px',
-          background: '#e8d5b0',
-          borderRadius: '2px'
-        }}
-      />
-      {title}
-    </div>
-  );
-}
-
 // ─── 主组件 ──────────────────────────────────────────
 
 export interface ProfileDetailData {
@@ -289,195 +294,146 @@ interface Props {
 
 export default function ProfileDetailCard({ data }: Props) {
   const { avatar, game, uid } = data;
-  const elemColor = ELEMENT_COLORS[avatar.element] ?? '#888';
-  const starColor = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[5];
-  const consLabel = game === 'sr' ? '星魂' : '命座';
+  const elemBg = ELEM_BG[avatar.element] ?? ELEM_BG.hydro;
 
   return (
     <HTML style={{ width: '600px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '600px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '400px'
+          fontSize: '18px',
+          color: '#1e1f20',
+          backgroundImage: `url(${elemBg})`,
+          backgroundSize: 'cover'
         }}
       >
-        {/* ── 顶部角色信息区 ── */}
         <div
           style={{
-            padding: '20px 24px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            borderBottom: '1px solid rgba(255,255,255,0.08)'
+            width: '600px',
+            padding: '0',
+            backgroundSize: 'cover',
+            overflow: 'hidden'
           }}
         >
-          {/* 圆形头像 */}
-          <div
-            style={{
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              border: `3px solid ${starColor}`,
-              boxShadow: `0 0 12px ${starColor}44`,
-              overflow: 'hidden',
-              flexShrink: 0
-            }}
-          >
-            <img src={avatar.icon} style={{ width: '100%', height: '100%' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span
+          {/* ── 顶部区域：角色名 + 等级 + 属性面板 ── */}
+          <div style={{ padding: '0 10px', marginRight: '5px', position: 'relative', margin: '0 -15px 10px -10px' }}>
+            {/* 角色名 (NZBZ) */}
+            <div style={{ position: 'relative', padding: '20px 20px 10px', color: '#fff', textAlign: 'right' }}>
+              <div
                 style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  color: '#fff',
-                  textShadow: '0 0 8px rgba(255,255,255,0.2)'
+                  fontFamily: FONT_NZBZ,
+                  fontSize: '50px',
+                  textShadow: '0 0 3px #000, 2px 2px 4px rgba(0,0,0,0.7)'
                 }}
               >
                 {avatar.name}
-              </span>
-              <span
+              </div>
+              <div
                 style={{
-                  fontSize: '11px',
-                  background: elemColor,
-                  color: '#fff',
-                  borderRadius: '4px',
-                  padding: '2px 8px',
-                  fontWeight: 'bold'
+                  marginBottom: '20px',
+                  textShadow: '0 0 3px #000, 2px 2px 4px rgba(0,0,0,0.7)',
+                  textAlign: 'right'
                 }}
               >
-                {avatar.element}
-              </span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                marginTop: '6px',
-                fontSize: '12px',
-                color: '#999'
-              }}
-            >
-              <span>UID: {uid}</span>
-              <span style={{ color: starColor }}>{'★'.repeat(avatar.rarity)}</span>
-              <span>Lv.{avatar.level}</span>
-              <span>
-                {consLabel}: {avatar.cons}
-              </span>
-              {game === 'gs' && <span>好感: {avatar.fetter}</span>}
-            </div>
-          </div>
-        </div>
-
-        {/* ── 天赋 ── */}
-        {avatar.talent && (
-          <div style={{ padding: '14px 24px' }}>
-            <SectionTitle title={game === 'sr' ? '行迹' : '天赋'} />
-            <TalentRow talent={avatar.talent} game={game} />
-          </div>
-        )}
-
-        {/* ── 命座 ── */}
-        <div style={{ padding: '4px 24px 14px' }}>
-          <SectionTitle title={consLabel} />
-          <ConsRow cons={avatar.cons} />
-        </div>
-
-        {/* ── 属性面板 ── */}
-        {avatar.stats && avatar.stats.length > 0 && (
-          <div style={{ padding: '0 24px 14px' }}>
-            <SectionTitle title='属性面板' />
-            <div>
-              {avatar.stats.map((stat, i) => (
-                <AttrRow key={stat.key} stat={stat} idx={i} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── 武器/光锥 ── */}
-        {avatar.weapon && (
-          <div style={{ padding: '0 24px 14px' }}>
-            <SectionTitle title={game === 'sr' ? '光锥' : '武器'} />
-            <WeaponSection weapon={avatar.weapon} game={game} />
-          </div>
-        )}
-
-        {/* ── 圣遗物/遗器 ── */}
-        {avatar.artifacts &&
-          avatar.artifacts.length > 0 &&
-          (() => {
-            const totalScore = scoreCharacterArtifacts(avatar);
-
-            return (
-              <div style={{ padding: '0 24px 14px' }}>
-                <SectionTitle title={game === 'sr' ? '遗器' : '圣遗物'} />
-                <div
+                UID {uid} - Lv.{avatar.level}
+                <span
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 14px',
-                    background: 'rgba(0,0,0,0.25)',
-                    borderRadius: '6px',
-                    marginBottom: '8px'
+                    display: 'inline-block',
+                    verticalAlign: 'bottom',
+                    padding: '0 5px',
+                    borderRadius: '4px',
+                    marginLeft: '5px',
+                    background: CONS_COLORS[avatar.cons] ?? '#666',
+                    color: '#fff'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', color: '#aaa' }}>总评分</span>
-                    <span
-                      style={{
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        color: totalScore.grade.color
-                      }}
-                    >
-                      {totalScore.totalMark}
+                  {avatar.cons}
+                  {game === 'sr' ? '魂' : '命'}
+                </span>
+              </div>
+
+              {/* 天赋 (原神) */}
+              {game === 'gs' && avatar.talent && <TalentRow talent={avatar.talent} game={game} />}
+
+              {/* 属性面板 */}
+              {avatar.stats && avatar.stats.length > 0 && (
+                <div
+                  style={{
+                    backdropFilter: 'blur(2px)',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {avatar.stats.map((stat, i) => (
+                    <AttrRow key={stat.key} stat={stat} idx={i} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 命座 */}
+            <div style={{ position: 'relative', padding: '5px 20px' }}>
+              <ConsRow cons={avatar.cons} />
+            </div>
+          </div>
+
+          {/* ── 星铁天赋 ── */}
+          {game === 'sr' && avatar.talent && (
+            <div style={contStyle({ margin: '5px 15px' })}>
+              <div style={contTitleStyle()}>行迹</div>
+              <div style={{ padding: '10px 15px' }}>
+                <TalentRow talent={avatar.talent} game={game} />
+              </div>
+            </div>
+          )}
+
+          {/* ── 武器/光锥 ── */}
+          {avatar.weapon && (
+            <div style={contStyle({ margin: '5px 15px' })}>
+              <div style={contTitleStyle()}>{game === 'sr' ? '光锥' : '武器'}</div>
+              <div style={{ padding: '10px 15px' }}>
+                <WeaponSection weapon={avatar.weapon} game={game} />
+              </div>
+            </div>
+          )}
+
+          {/* ── 圣遗物/遗器 ── */}
+          {avatar.artifacts &&
+            avatar.artifacts.length > 0 &&
+            (() => {
+              const totalScore = scoreCharacterArtifacts(avatar);
+
+              return (
+                <div style={contStyle({ margin: '5px 15px' })}>
+                  <div style={contTitleStyle()}>
+                    {game === 'sr' ? '遗器' : '圣遗物'}
+                    <span style={{ fontSize: '12px', color: '#aaa', marginLeft: '10px', fontWeight: 'normal' }}>
+                      评分 {totalScore.totalMark} · {totalScore.grade.grade}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', color: '#aaa' }}>平均</span>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{totalScore.avgMark}</span>
-                    <span
-                      style={{
-                        fontSize: '13px',
-                        fontWeight: 'bold',
-                        color: totalScore.grade.color,
-                        background: 'rgba(0,0,0,0.3)',
-                        borderRadius: '4px',
-                        padding: '2px 8px'
-                      }}
-                    >
-                      {totalScore.grade.grade}
-                    </span>
+                  <div style={{ padding: '5px 10px' }}>
+                    {avatar.artifacts.map(art => (
+                      <ArtifactItem key={art.pos} art={art} charName={avatar.name} />
+                    ))}
                   </div>
                 </div>
-                {avatar.artifacts.map(art => (
-                  <ArtifactItem key={art.pos} art={art} charName={avatar.name} />
-                ))}
-              </div>
-            );
-          })()}
+              );
+            })()}
 
-        {/* ── 底部 ── */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '11px',
-            color: '#666'
-          }}
-        >
-          <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{formatDateZh()}</span>
+          {/* ── copyright ── */}
+          <div
+            style={{
+              fontSize: '14px',
+              textAlign: 'center',
+              color: '#fff',
+              textShadow: '1px 1px 1px #000',
+              margin: '10px 0'
+            }}
+          >
+            AlemonJS
+          </div>
         </div>
       </div>
     </HTML>

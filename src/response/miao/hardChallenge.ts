@@ -43,14 +43,10 @@ interface RawApiResponse {
   };
 }
 
-function formatTimestamp(ts: number): string {
-  const d = new Date(ts * 1000);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mi = String(d.getMinutes()).padStart(2, '0');
+import dayjs from 'dayjs';
 
-  return `${mm}-${dd} ${hh}:${mi}`;
+function formatTimestamp(ts: number): string {
+  return dayjs.unix(ts).format('MM-DD HH:mm');
 }
 
 function transformApiData(raw: RawApiResponse, uid: string): HardChallengeData {
@@ -92,11 +88,13 @@ function transformApiData(raw: RawApiResponse, uid: string): HardChallengeData {
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
   const userId = event.UserId;
+
+  logger.debug('[hardChallenge] 进入', { userId });
 
   const result = await queryMihoyoApi({
     userId,
@@ -104,6 +102,8 @@ export default async (e: EventsEnum) => {
     api: 'hardChallenge',
     query: { need_detail: true }
   });
+
+  logger.debug('[hardChallenge] API 返回', { success: result.success, message: result.message });
 
   const format = Format.create();
 

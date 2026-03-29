@@ -4,7 +4,7 @@
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { DARK_BG, ELEMENT_COLORS, FONT_FAMILY, STAR_COLORS, formatDateZh } from './shared.js';
+import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, fetterStyle, formatDateZh } from './shared.js';
 
 // ─── 统计条 ─────────────────────────────────────────
 
@@ -54,28 +54,30 @@ function StatBar({ label, value, max, color }: { label: string; value: number; m
 
 // ─── 角色列表行 ──────────────────────────────────────
 
-function CharRow({ avatar, game }: { avatar: ProfileAvatar; game: string }) {
+function CharRow({ avatar, game, idx }: { avatar: ProfileAvatar; game: string; idx: number }) {
   const border = STAR_COLORS[avatar.rarity] ?? STAR_COLORS[4];
-  const elemColor = ELEMENT_COLORS[avatar.element] ?? '#888';
   const consLabel = game === 'sr' ? '星魂' : '命座';
-  const weaponLabel = game === 'sr' ? '光锥' : '武器';
+  const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.2)';
 
   return (
     <div
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        padding: '6px 14px',
-        background: 'rgba(0,0,0,0.15)',
-        borderRadius: '6px',
-        marginBottom: '4px'
+        gap: '6px',
+        padding: '4px 10px',
+        background: bgColor,
+        fontSize: '13px',
+        color: '#fff'
       }}
     >
+      {/* 序号 */}
+      <span style={{ width: '22px', textAlign: 'center', color: border, fontWeight: 'bold', fontSize: '12px' }}>{idx + 1}</span>
+      {/* 头像 */}
       <div
         style={{
-          width: '36px',
-          height: '36px',
+          width: '30px',
+          height: '30px',
           borderRadius: '50%',
           border: `2px solid ${border}`,
           overflow: 'hidden',
@@ -84,44 +86,26 @@ function CharRow({ avatar, game }: { avatar: ProfileAvatar; game: string }) {
       >
         <img src={avatar.icon} style={{ width: '100%', height: '100%' }} />
       </div>
-      <div style={{ width: '60px', flexShrink: 0 }}>
-        <div
-          style={{
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#fff',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          {avatar.abbr || avatar.name}
-        </div>
-      </div>
-      <span
-        style={{
-          fontSize: '10px',
-          background: elemColor,
-          color: '#fff',
-          borderRadius: '3px',
-          padding: '1px 5px',
-          flexShrink: 0
-        }}
-      >
-        {avatar.element}
-      </span>
-      <span style={{ fontSize: '12px', color: '#e8d5b0', width: '45px' }}>Lv.{avatar.level}</span>
-      <span style={{ fontSize: '11px', color: '#ccc', width: '45px' }}>
+      {/* 名称 */}
+      <span style={{ width: '65px', flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{avatar.abbr || avatar.name}</span>
+      {/* 等级 */}
+      <span style={{ width: '42px', color: '#e8d5b0' }}>Lv.{avatar.level}</span>
+      {/* 命座 */}
+      <span style={{ width: '35px', fontSize: '12px' }}>
         {consLabel}
         {avatar.cons}
       </span>
+      {/* 好感 */}
+      {avatar.fetter !== undefined && <div style={fetterStyle(avatar.fetter, 20)} />}
+      {/* 武器 */}
       {avatar.weapon && (
-        <span style={{ fontSize: '11px', color: '#aaa' }}>
-          {weaponLabel} Lv.{avatar.weapon.level} 精{avatar.weapon.affix}
+        <span style={{ fontSize: '12px', color: '#ccc', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {avatar.weapon.name} Lv.{avatar.weapon.level} 精{avatar.weapon.affix}
         </span>
       )}
+      {/* 天赋 */}
       {avatar.talent && (
-        <span style={{ fontSize: '11px', color: '#aaa', marginLeft: 'auto' }}>
+        <span style={{ fontSize: '12px', color: '#aaa', flexShrink: 0 }}>
           {avatar.talent.a}/{avatar.talent.e}/{avatar.talent.q}
         </span>
       )}
@@ -191,198 +175,148 @@ export default function TrainingStatCard({ data }: Props) {
     <HTML style={{ width: '680px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '680px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '400px'
+          fontSize: '16px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            padding: '20px 24px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            width: '680px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
-          <div
-            style={{
-              fontSize: '22px',
-              fontWeight: 'bold',
-              color: '#fff',
-              textShadow: '0 0 6px rgba(255,255,255,0.3)'
-            }}
-          >
-            #练度统计
-            <span
-              style={{
-                fontSize: '13px',
-                color: '#aaa',
-                fontWeight: 'normal',
-                marginLeft: '12px'
-              }}
-            >
-              {nickname} · UID:{uid}
-            </span>
-          </div>
-        </div>
-
-        {/* 概览 */}
-        <div
-          style={{
-            padding: '14px 24px',
-            display: 'flex',
-            gap: '12px',
-            flexWrap: 'wrap'
-          }}
-        >
-          {[
-            { label: '总角色', value: total, color: '#42a5f5' },
-            { label: '五星', value: star5, color: '#ce8d54' },
-            { label: '四星', value: star4, color: '#a0a0e8' },
-            { label: '满级', value: maxLevel, color: '#66bb6a' },
-            { label: `满${consLabel}`, value: maxCons, color: '#d4a574' }
-          ].map(item => (
+          {/* head-box */}
+          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
             <div
-              key={item.label}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                background: 'rgba(0,0,0,0.25)',
-                borderRadius: '8px',
-                padding: '10px 16px',
-                minWidth: '70px'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
               }}
             >
-              <span style={{ fontSize: '11px', color: '#aaa' }}>{item.label}</span>
+              #练度统计
               <span
                 style={{
-                  fontSize: '22px',
-                  fontWeight: 'bold',
-                  color: item.color,
-                  marginTop: '2px'
+                  display: 'inline-block',
+                  marginLeft: '10px',
+                  fontSize: '16px',
+                  fontFamily: FONT_FAMILY,
+                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
                 }}
               >
-                {item.value}
+                {nickname} · UID:{uid}
               </span>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* 等级分布 & 命座分布 */}
-        <div style={{ padding: '0 24px 14px', display: 'flex', gap: '20px' }}>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                fontSize: '13px',
-                fontWeight: 'bold',
-                color: '#e8d5b0',
-                marginBottom: '8px',
-                paddingBottom: '4px',
-                borderBottom: '1px solid rgba(232,213,176,0.2)'
-              }}
-            >
-              等级分布
-            </div>
-            {levelBuckets.map(b => (
-              <StatBar key={b.label} label={`Lv.${b.label}`} value={b.count} max={maxBucketVal} color='#42a5f5' />
-            ))}
-          </div>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                fontSize: '13px',
-                fontWeight: 'bold',
-                color: '#e8d5b0',
-                marginBottom: '8px',
-                paddingBottom: '4px',
-                borderBottom: '1px solid rgba(232,213,176,0.2)'
-              }}
-            >
-              {consLabel}分布
-            </div>
-            {consBuckets.map(b => (
-              <StatBar key={b.label} label={b.label} value={b.count} max={maxConsVal} color='#ab47bc' />
-            ))}
-          </div>
-        </div>
-
-        {/* 元素分布 */}
-        <div style={{ padding: '0 24px 14px' }}>
-          <div
-            style={{
-              fontSize: '13px',
-              fontWeight: 'bold',
-              color: '#e8d5b0',
-              marginBottom: '8px',
-              paddingBottom: '4px',
-              borderBottom: '1px solid rgba(232,213,176,0.2)'
-            }}
-          >
-            元素分布
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {Object.entries(elemCounts).map(([elem, count]) => (
-              <div
-                key={elem}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  background: 'rgba(0,0,0,0.25)',
-                  borderRadius: '6px',
-                  padding: '6px 12px'
-                }}
-              >
-                <span
+          {/* 概览 */}
+          <div style={contStyle()}>
+            <div style={contTitleStyle()}>概览</div>
+            <div style={{ display: 'flex', padding: '12px 15px', gap: '10px', flexWrap: 'wrap' }}>
+              {[
+                { label: '总角色', value: total, color: '#42a5f5' },
+                { label: '五星', value: star5, color: '#ce8d54' },
+                { label: '四星', value: star4, color: '#a0a0e8' },
+                { label: '满级', value: maxLevel, color: '#66bb6a' },
+                { label: `满${consLabel}`, value: maxCons, color: '#d4a574' }
+              ].map(item => (
+                <div
+                  key={item.label}
                   style={{
-                    fontSize: '12px',
-                    color: ELEMENT_COLORS[elem] ?? '#888',
-                    fontWeight: 'bold'
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: 'rgba(0,0,0,0.3)',
+                    borderRadius: '6px',
+                    padding: '8px 14px',
+                    minWidth: '65px'
                   }}
                 >
-                  {elem}
-                </span>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{count}</span>
+                  <span style={{ fontSize: '12px', color: '#d3bc8e' }}>{item.label}</span>
+                  <span style={{ fontSize: '22px', fontWeight: 'bold', color: item.color, marginTop: '2px' }}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 等级分布 & 命座分布 */}
+          <div style={{ display: 'flex', gap: '10px', padding: '0 0 5px' }}>
+            <div style={contStyle({ flex: 1 })}>
+              <div style={contTitleStyle()}>等级分布</div>
+              <div style={{ padding: '8px 12px' }}>
+                {levelBuckets.map(b => (
+                  <StatBar key={b.label} label={`Lv.${b.label}`} value={b.count} max={maxBucketVal} color='#42a5f5' />
+                ))}
               </div>
+            </div>
+            <div style={contStyle({ flex: 1 })}>
+              <div style={contTitleStyle()}>{consLabel}分布</div>
+              <div style={{ padding: '8px 12px' }}>
+                {consBuckets.map(b => (
+                  <StatBar key={b.label} label={b.label} value={b.count} max={maxConsVal} color='#ab47bc' />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 元素分布 */}
+          <div style={contStyle()}>
+            <div style={contTitleStyle()}>元素分布</div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '10px 15px' }}>
+              {Object.entries(elemCounts).map(([elem, count]) => (
+                <div
+                  key={elem}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: 'rgba(0,0,0,0.3)',
+                    borderRadius: '4px',
+                    padding: '5px 10px'
+                  }}
+                >
+                  <span style={{ fontSize: '13px', color: ELEMENT_COLORS[elem] ?? '#888', fontWeight: 'bold' }}>{elem}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 角色列表 */}
+          <div style={contStyle()}>
+            <div style={contTitleStyle()}>角色详情</div>
+            {sorted.map((av, idx) => (
+              <CharRow key={av.id} avatar={av} game={game} idx={idx} />
             ))}
           </div>
-        </div>
 
-        {/* 角色列表 */}
-        <div style={{ padding: '0 24px 14px' }}>
+          {/* 底部 */}
           <div
             style={{
-              fontSize: '13px',
-              fontWeight: 'bold',
-              color: '#e8d5b0',
-              marginBottom: '8px',
-              paddingBottom: '4px',
-              borderBottom: '1px solid rgba(232,213,176,0.2)'
+              display: 'flex',
+              background: 'rgba(0,0,0,0.4)',
+              width: '100%',
+              padding: '10px 15px',
+              fontSize: '12px',
+              color: '#fff',
+              borderRadius: '0 0 10px 10px',
+              margin: '5px 10px'
             }}
           >
-            角色详情
+            <span style={{ width: '50%' }}>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
+            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
           </div>
-          {sorted.map(av => (
-            <CharRow key={av.id} avatar={av} game={game} />
-          ))}
-        </div>
 
-        {/* 底部 */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '11px',
-            color: '#666'
-          }}
-        >
-          <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{formatDateZh()}</span>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
         </div>
       </div>
     </HTML>

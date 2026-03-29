@@ -7,7 +7,18 @@ import { resolveGame } from 'alemonjs-mhy';
  */
 export default (e: EventsEnum) => {
   const text = e.MessageText ?? '';
+
+  logger.debug('[miao:mw] 收到消息', {
+    userId: e.UserId,
+    text,
+    eventName: e.name
+  });
+
+  // 至少为空字符串，避免后续解析命令时出现 undefined 导致的错误
+  e.MessageText ??= '';
   const game = resolveGame(text);
+
+  logger.debug('[miao:mw] 解析游戏', { game, text });
 
   Object.defineProperty(e, 'miao', {
     value: { game },

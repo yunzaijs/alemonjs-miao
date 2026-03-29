@@ -6,7 +6,7 @@ import { getGrade } from '@src/model/miao/artisMark.js';
 import type { RankEntry } from '@src/model/miao/profileRank.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { DARK_BG, ELEMENT_COLORS, FONT_FAMILY, formatDateZh } from './shared.js';
+import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh, rankIconStyle } from './shared.js';
 
 // ─── 颜色常量 ────────────────────────────────────────
 
@@ -20,12 +20,12 @@ const RANK_MEDAL: Record<number, string> = {
 
 function RankRow({ entry, idx, type }: { entry: RankEntry; idx: number; type: string }) {
   const medalColor = RANK_MEDAL[entry.rank];
-  const bgColor = medalColor ? `linear-gradient(90deg, ${medalColor}18, transparent)` : idx % 2 === 0 ? 'rgba(0,0,0,0.2)' : 'rgba(50,50,50,0.4)';
+  const bgColor = idx % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.2)';
 
   let gradeInfo: ArtisGradeInfo | null = null;
 
   if (type === 'mark') {
-    gradeInfo = getGrade(entry.score / 5); // 单件平均
+    gradeInfo = getGrade(entry.score / 5);
   }
 
   return (
@@ -33,26 +33,24 @@ function RankRow({ entry, idx, type }: { entry: RankEntry; idx: number; type: st
       style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '8px 14px',
+        padding: '6px 14px',
         background: bgColor,
-        borderRadius: '4px',
-        marginBottom: '2px',
-        gap: '12px'
+        gap: '10px'
       }}
     >
-      {/* 排名 */}
+      {/* 排名徽章 */}
       <div
         style={{
-          width: '32px',
-          height: '32px',
+          width: '28px',
+          height: '28px',
           borderRadius: '50%',
           background: medalColor ?? 'rgba(100,100,100,0.5)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: medalColor ? '16px' : '14px',
+          fontSize: medalColor ? '14px' : '13px',
           fontWeight: 'bold',
-          color: medalColor ? '#fff' : '#aaa',
+          color: '#fff',
           flexShrink: 0
         }}
       >
@@ -60,30 +58,22 @@ function RankRow({ entry, idx, type }: { entry: RankEntry; idx: number; type: st
       </div>
 
       {/* UID */}
-      <span
-        style={{
-          fontSize: '13px',
-          color: '#ccc',
-          width: '120px',
-          flexShrink: 0
-        }}
-      >
-        UID: {entry.uid}
-      </span>
+      <span style={{ fontSize: '13px', color: '#fff', width: '110px', flexShrink: 0 }}>UID: {entry.uid}</span>
 
       {/* 分数 */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px' }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px' }}>
+        <div style={rankIconStyle(type === 'mark' ? 'mark' : 'dmg')} />
         <span
           style={{
-            fontSize: '18px',
+            fontSize: '16px',
             fontWeight: 'bold',
             color: entry.rank <= 3 ? (RANK_MEDAL[entry.rank] ?? '#fff') : '#fff'
           }}
         >
           {entry.score}
         </span>
-        {type === 'mark' && <span style={{ fontSize: '12px', color: '#aaa' }}>分</span>}
-        {type === 'crit' && <span style={{ fontSize: '12px', color: '#aaa' }}>%</span>}
+        {type === 'mark' && <span style={{ fontSize: '12px', color: '#d3bc8e' }}>分</span>}
+        {type === 'crit' && <span style={{ fontSize: '12px', color: '#d3bc8e' }}>%</span>}
         {gradeInfo && (
           <span
             style={{
@@ -131,105 +121,87 @@ export default function RankListCard({ data }: Props) {
     <HTML style={{ width: '550px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '550px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '300px'
+          fontSize: '16px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            padding: '20px 24px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            width: '550px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}
-          >
-            <span
+          {/* head-box */}
+          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
+            <div
               style={{
-                fontSize: '22px',
-                fontWeight: 'bold',
-                color: '#fff',
-                textShadow: '0 0 6px rgba(255,255,255,0.3)'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
               }}
             >
               {charName}
-            </span>
-            {charElement && (
-              <span
-                style={{
-                  fontSize: '11px',
-                  background: elemColor,
-                  color: '#fff',
-                  borderRadius: '4px',
-                  padding: '2px 8px',
-                  fontWeight: 'bold'
-                }}
-              >
-                {charElement}
-              </span>
-            )}
-            <span
-              style={{
-                fontSize: '13px',
-                color: '#aaa',
-                marginLeft: 'auto'
-              }}
-            >
-              {typeLabel}排行
-            </span>
+              {charElement && (
+                <span
+                  style={{
+                    fontSize: '14px',
+                    background: elemColor,
+                    color: '#fff',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    fontFamily: FONT_FAMILY
+                  }}
+                >
+                  {charElement}
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: '14px', textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)' }}>
+              {typeLabel}排行 · 共 {entries.length} 人参与
+            </div>
           </div>
+
+          {/* 排名列表 */}
+          <div style={contStyle()}>
+            <div style={contTitleStyle()}>群内排名</div>
+            {entries.length > 0 ? (
+              entries.map((entry, idx) => <RankRow key={entry.uid} entry={entry} idx={idx} type={type} />)
+            ) : (
+              <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: '#fff', fontSize: '14px' }}>
+                暂无排名数据，请先使用 #更新面板 提交数据
+              </div>
+            )}
+          </div>
+
           <div
             style={{
+              display: 'flex',
+              background: 'rgba(0,0,0,0.4)',
+              width: '100%',
+              padding: '10px 15px',
               fontSize: '12px',
-              color: '#999',
-              marginTop: '6px'
+              color: '#fff',
+              borderRadius: '0 0 10px 10px',
+              margin: '5px 10px'
             }}
           >
-            群内排名 · 共 {entries.length} 人参与
+            <span style={{ width: '50%' }}>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
+            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
           </div>
-        </div>
 
-        {/* 排名列表 */}
-        <div style={{ padding: '14px 20px' }}>
-          {entries.length > 0 ? (
-            entries.map((entry, idx) => <RankRow key={entry.uid} entry={entry} idx={idx} type={type} />)
-          ) : (
-            <div
-              style={{
-                width: '100%',
-                textAlign: 'center',
-                padding: '40px 0',
-                color: '#666',
-                fontSize: '14px'
-              }}
-            >
-              暂无排名数据，请先使用 #更新面板 提交数据
-            </div>
-          )}
-        </div>
-
-        {/* 底部 */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '11px',
-            color: '#666'
-          }}
-        >
-          <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{formatDateZh()}</span>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
         </div>
       </div>
     </HTML>

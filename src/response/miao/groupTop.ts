@@ -25,7 +25,7 @@ function parseRankType(text: string): string {
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
@@ -33,6 +33,8 @@ export default async (e: EventsEnum) => {
   const game = e.miao?.game ?? 'gs';
   const text = e.MessageText;
   const guildId = (e as any).GuildId as string | undefined;
+
+  logger.debug('[groupTop] 进入', { userId, game, guildId });
 
   if (!guildId) {
     const md = Format.createMarkdown();

@@ -10,11 +10,13 @@ import { renderComponentIsHtmlToBuffer } from 'jsxp';
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
   const userId = event.UserId;
+
+  logger.debug('[roleCombat] 进入', { userId });
 
   const result = await queryMihoyoApi({
     userId,
@@ -22,6 +24,8 @@ export default async (e: EventsEnum) => {
     api: 'roleCombat',
     query: { need_detail: true }
   });
+
+  logger.debug('[roleCombat] API 返回', { success: result.success, message: result.message });
 
   const format = Format.create();
 

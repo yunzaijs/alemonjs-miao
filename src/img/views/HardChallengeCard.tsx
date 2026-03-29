@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, RARITY_COLORS, formatDate } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
 
 // ─── 类型定义 ────────────────────────────────────────
 
@@ -95,8 +95,6 @@ function formatDps(dps: number): string {
 // ─── 主组件 ──────────────────────────────────────────
 
 export default function HardChallengeCard({ data }: { data: HardChallengeData }) {
-  const dateStr = formatDate();
-
   const diff = data.best?.difficulty ?? 0;
   const diffLabel = diff > 0 ? `${DIFFICULTY_ROMAN[diff] ?? diff} · ${DIFFICULTY_NAMES[diff] ?? '未知'}` : '未挑战';
 
@@ -104,159 +102,143 @@ export default function HardChallengeCard({ data }: { data: HardChallengeData })
     <HTML style={{ width: '700px' }}>
       <div
         style={{
-          padding: '24px',
-          background: 'linear-gradient(180deg, #1a1520 0%, #2d2435 40%)',
+          width: '700px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#e8e0f0'
+          fontSize: '16px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #6a3fa0, #4a2b75)',
-            borderRadius: '14px 14px 0 0',
-            padding: '14px 20px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            width: '700px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#e8d5f5' }}>幽境危战</span>
-            <span
+          {/* head-box */}
+          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
+            <div
               style={{
-                fontSize: '12px',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                background: 'rgba(255,255,255,0.15)',
-                color: '#d4bfef'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
               }}
             >
-              {diffLabel}
-            </span>
+              幽境危战
+              <span
+                style={{
+                  display: 'inline-block',
+                  marginLeft: '10px',
+                  fontSize: '16px',
+                  fontFamily: FONT_FAMILY,
+                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
+                }}
+              >
+                UID:{data.uid} · {diffLabel}
+              </span>
+            </div>
           </div>
-          <span style={{ fontSize: '13px', color: '#b8a0d0' }}>UID {data.uid}</span>
-        </div>
 
-        {/* 内容 */}
-        <div
-          style={{
-            background: 'rgba(30, 25, 40, 0.9)',
-            borderRadius: '0 0 14px 14px',
-            padding: '16px 20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-          }}
-        >
           {!data.has_data ? (
-            <div style={{ textAlign: 'center', padding: '20px 0', color: '#8a7a9e', fontSize: '14px' }}>本期暂无挑战数据</div>
+            <div style={contStyle()}>
+              <div style={{ textAlign: 'center', padding: '30px 0', color: '#fff', fontSize: '14px' }}>本期暂无挑战数据</div>
+            </div>
           ) : (
             <>
-              {/* 总览信息 */}
-              {data.schedule && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid rgba(255,255,255,0.08)',
-                    color: '#a090b8',
-                    fontSize: '13px'
-                  }}
-                >
-                  <span>周期</span>
-                  <span>
-                    {data.schedule.start_time} ~ {data.schedule.end_time}
-                  </span>
-                </div>
-              )}
-
-              {data.best?.has_data && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid rgba(255,255,255,0.08)'
-                  }}
-                >
-                  <span style={{ color: '#a090b8', fontSize: '13px' }}>最佳用时</span>
-                  <span style={{ fontWeight: 'bold' }}>{formatTime(data.best.second)}</span>
+              {/* 总览 */}
+              {(data.schedule || data.best?.has_data) && (
+                <div style={contStyle()}>
+                  <div style={contTitleStyle()}>总览</div>
+                  <div style={{ padding: '8px 15px' }}>
+                    {data.schedule && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          padding: '6px 0',
+                          color: '#fff',
+                          fontSize: '14px',
+                          borderBottom: '1px solid rgba(255,255,255,0.1)'
+                        }}
+                      >
+                        <span style={{ color: '#d3bc8e' }}>周期</span>
+                        <span>
+                          {data.schedule.start_time} ~ {data.schedule.end_time}
+                        </span>
+                      </div>
+                    )}
+                    {data.best?.has_data && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', color: '#fff', fontSize: '14px' }}>
+                        <span style={{ color: '#d3bc8e' }}>最佳用时</span>
+                        <span style={{ fontWeight: 'bold' }}>{formatTime(data.best.second)}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* 各关卡 */}
               {data.challs.map((chall, ci) => (
-                <div
-                  key={ci}
-                  style={{
-                    marginTop: '12px',
-                    padding: '12px',
-                    background: 'rgba(255,255,255,0.04)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.06)'
-                  }}
-                >
-                  {/* 关卡标题 */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '8px'
-                    }}
-                  >
-                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#d4bfef' }}>{chall.name}</span>
-                    <span style={{ fontSize: '12px', color: '#8a7a9e' }}>用时 {formatTime(chall.second)}</span>
+                <div key={ci} style={contStyle()}>
+                  <div style={contTitleStyle({ display: 'flex', justifyContent: 'space-between' })}>
+                    <span>{chall.name}</span>
+                    <span style={{ fontWeight: 'normal', fontSize: '13px' }}>用时 {formatTime(chall.second)}</span>
                   </div>
-
-                  {/* 怪物等级 */}
-                  {chall.monster && (
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: '#8a7a9e',
-                        marginBottom: '6px'
-                      }}
-                    >
-                      Lv.{chall.monster.level}
+                  <div style={{ padding: '8px 15px' }}>
+                    {chall.monster && <div style={{ fontSize: '13px', color: '#d3bc8e', marginBottom: '6px' }}>Lv.{chall.monster.level}</div>}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                      {chall.avatars.map((a, ai) => (
+                        <span
+                          key={ai}
+                          style={{
+                            fontSize: '13px',
+                            padding: '3px 10px',
+                            borderRadius: '4px',
+                            background: 'rgba(0,0,0,0.3)',
+                            color: RARITY_COLORS[a.rarity] ?? '#fff'
+                          }}
+                        >
+                          {a.name} Lv.{a.level}
+                          {a.rank > 0 && <span style={{ fontSize: '11px', color: '#d3bc8e', marginLeft: '2px' }}>C{a.rank}</span>}
+                        </span>
+                      ))}
                     </div>
-                  )}
-
-                  {/* 阵容 */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
-                    {chall.avatars.map((a, ai) => (
-                      <span
-                        key={ai}
-                        style={{
-                          fontSize: '12px',
-                          padding: '2px 8px',
-                          borderRadius: '4px',
-                          background: 'rgba(255,255,255,0.08)',
-                          color: RARITY_COLORS[a.rarity] ?? '#e8e0f0'
-                        }}
-                      >
-                        {a.name} Lv.{a.level}
-                        {a.rank > 0 && <span style={{ fontSize: '10px', color: '#8a7a9e', marginLeft: '2px' }}>C{a.rank}</span>}
-                      </span>
-                    ))}
+                    {chall.best_avatars.length > 0 && (
+                      <div style={{ display: 'flex', gap: '12px', fontSize: '13px' }}>
+                        {chall.best_avatars[0] && <span style={{ color: '#e8a040' }}>最强一击: {formatDps(chall.best_avatars[0].dps)}</span>}
+                        {chall.best_avatars[1] && <span style={{ color: '#60b0e0' }}>最高总伤害: {formatDps(chall.best_avatars[1].dps)}</span>}
+                      </div>
+                    )}
                   </div>
-
-                  {/* 最佳伤害 */}
-                  {chall.best_avatars.length > 0 && (
-                    <div style={{ display: 'flex', gap: '12px', fontSize: '12px' }}>
-                      {chall.best_avatars[0] && <span style={{ color: '#e8a040' }}>最强一击: {formatDps(chall.best_avatars[0].dps)}</span>}
-                      {chall.best_avatars[1] && <span style={{ color: '#60b0e0' }}>最高总伤害: {formatDps(chall.best_avatars[1].dps)}</span>}
-                    </div>
-                  )}
                 </div>
               ))}
             </>
           )}
-        </div>
 
-        <div style={{ textAlign: 'right', padding: '8px 4px 0', fontSize: '11px', color: '#6a5a80' }}>{dateStr}</div>
+          <div
+            style={{
+              display: 'flex',
+              background: 'rgba(0,0,0,0.4)',
+              width: '100%',
+              padding: '10px 15px',
+              fontSize: '12px',
+              color: '#fff',
+              borderRadius: '0 0 10px 10px',
+              margin: '5px 10px'
+            }}
+          >
+            <span style={{ width: '50%' }}>数据来源: 米游社</span>
+            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
+          </div>
+
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
+        </div>
       </div>
     </HTML>
   );

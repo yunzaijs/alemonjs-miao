@@ -8,13 +8,15 @@ import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
   const text = e.MessageText;
   const guildId = (e as any).GuildId as string | undefined;
   const isMaster = event.IsMaster;
+
+  logger.debug('[rankAdmin] 进入', { guildId, isMaster });
 
   if (!guildId) {
     const md = Format.createMarkdown();

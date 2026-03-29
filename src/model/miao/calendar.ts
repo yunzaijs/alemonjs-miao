@@ -2,6 +2,7 @@
  * 日历模块 — 解析米游社公告获取活动/素材日程
  */
 import { getIoRedis } from '@alemonjs/db';
+import dayjs from 'dayjs';
 
 // ─── 公告 API 配置 ──────────────────────────────────
 
@@ -234,7 +235,7 @@ export async function fetchCalendar(game: string): Promise<CalendarData | null> 
     game,
     gameName: GAME_NAMES[game] ?? game,
     activities,
-    now: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+    now: dayjs().format('YYYY/M/D HH:mm:ss')
   };
 
   // 写入缓存

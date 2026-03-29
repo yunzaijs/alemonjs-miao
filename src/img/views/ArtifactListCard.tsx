@@ -5,7 +5,7 @@ import { scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { DARK_BG, FONT_FAMILY, formatDateZh, STAR_COLORS } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle, formatDateZh } from './shared.js';
 
 // ─── 颜色常量 ────────────────────────────────────────
 
@@ -158,84 +158,79 @@ export default function ArtifactListCard({ data }: Props) {
     <HTML style={{ width: '700px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '700px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '300px'
+          fontSize: '18px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            padding: '20px 24px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            width: '700px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
-          <div
-            style={{
-              fontSize: '22px',
-              fontWeight: 'bold',
-              color: '#fff',
-              textShadow: '0 0 6px rgba(255,255,255,0.3)'
-            }}
-          >
-            {game === 'sr' ? '#遗器列表' : '#圣遗物列表'}
-            <span
-              style={{
-                fontSize: '13px',
-                color: '#aaa',
-                fontWeight: 'normal',
-                marginLeft: '12px'
-              }}
-            >
-              UID:{uid}
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: '12px',
-              color: '#999',
-              marginTop: '6px'
-            }}
-          >
-            共 {scored.length} 名角色，按{game === 'sr' ? '遗器' : '圣遗物'}评分排序
-          </div>
-        </div>
-
-        {/* 角色列表 */}
-        <div style={{ padding: '14px 20px' }}>
-          {scored.length > 0 ? (
-            scored.map(({ av, score }) => <CharArtifactRow key={av.id} avatar={av} game={game} score={score} />)
-          ) : (
+          {/* head-box */}
+          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
             <div
               style={{
-                width: '100%',
-                textAlign: 'center',
-                padding: '40px 0',
-                color: '#666',
-                fontSize: '14px'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
               }}
             >
-              暂无{game === 'sr' ? '遗器' : '圣遗物'}数据
+              {game === 'sr' ? '#遗器列表' : '#圣遗物列表'}
+              <span
+                style={{
+                  display: 'inline-block',
+                  marginLeft: '10px',
+                  fontSize: '16px',
+                  fontFamily: FONT_FAMILY,
+                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
+                }}
+              >
+                UID:{uid}
+              </span>
             </div>
-          )}
-        </div>
+            <div style={{ fontSize: '16px', textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)' }}>
+              共 {scored.length} 名角色，按{game === 'sr' ? '遗器' : '圣遗物'}评分排序
+            </div>
+          </div>
 
-        {/* 底部 */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '11px',
-            color: '#666'
-          }}
-        >
-          <span>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
-          <span>{formatDateZh()}</span>
+          {/* .cont 面板 */}
+          <div style={contStyle()}>
+            <div style={{ padding: '10px' }}>
+              {scored.length > 0 ? (
+                scored.map(({ av, score }) => <CharArtifactRow key={av.id} avatar={av} game={game} score={score} />)
+              ) : (
+                <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: '#888', fontSize: '14px' }}>
+                  暂无{game === 'sr' ? '遗器' : '圣遗物'}数据
+                </div>
+              )}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                background: 'rgba(0,0,0,0.4)',
+                width: '100%',
+                padding: '10px 15px',
+                fontSize: '12px',
+                color: '#fff'
+              }}
+            >
+              <span style={{ width: '50%' }}>数据来源: {game === 'sr' ? 'Mihomo' : 'Enka Network'}</span>
+              <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
+            </div>
+          </div>
+
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
         </div>
       </div>
     </HTML>

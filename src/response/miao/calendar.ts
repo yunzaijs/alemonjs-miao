@@ -10,13 +10,17 @@ import { renderComponentIsHtmlToBuffer } from 'jsxp';
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
   const game = e.miao?.game ?? 'gs';
 
+  logger.debug('[calendar] 进入', { game });
+
   const data = await fetchCalendar(game);
+
+  logger.debug('[calendar] fetchCalendar 结果', { hasData: !!data });
 
   if (!data) {
     const md = Format.createMarkdown();

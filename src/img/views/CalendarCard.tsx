@@ -1,16 +1,7 @@
 import type { CalendarActivity, CalendarData } from '@src/model/miao/calendar.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { DARK_BG, FONT_FAMILY, GAME_ACCENT } from './shared.js';
-
-const TYPE_ICONS: Record<string, string> = {
-  character: '🎭',
-  weapon: '🗡️',
-  abyss: '⚔️',
-  pass: '📜',
-  activity: '🎉',
-  other: '📋'
-};
+import { FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
 
 const TYPE_LABELS: Record<string, string> = {
   character: '角色卡池',
@@ -22,8 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 function ActivityItem({ item }: { item: CalendarActivity }) {
-  const activeBg = item.isActive ? 'rgba(76,175,80,0.12)' : 'rgba(255,255,255,0.04)';
-  const activeBorder = item.isActive ? '1px solid rgba(76,175,80,0.25)' : '1px solid rgba(255,255,255,0.06)';
+  const activeBg = item.isActive ? 'rgba(76,175,80,0.15)' : 'rgba(0,0,0,0.15)';
 
   return (
     <div
@@ -31,19 +21,27 @@ function ActivityItem({ item }: { item: CalendarActivity }) {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        padding: '10px 14px',
+        padding: '8px 14px',
         background: activeBg,
-        borderRadius: '6px',
-        border: activeBorder
+        borderRadius: '4px',
+        marginBottom: '2px'
       }}
     >
-      <span style={{ fontSize: '18px', flexShrink: 0 }}>{TYPE_ICONS[item.type] ?? '📋'}</span>
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          background: item.isActive ? '#4caf50' : '#ff9800',
+          flexShrink: 0
+        }}
+      />
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
         <span
           style={{
-            fontSize: '13px',
+            fontSize: '14px',
             fontWeight: 'bold',
-            color: '#eee',
+            color: '#fff',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
@@ -52,19 +50,10 @@ function ActivityItem({ item }: { item: CalendarActivity }) {
           {item.title}
         </span>
         <div style={{ display: 'flex', gap: '8px', marginTop: '3px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '11px', color: '#888' }}>{TYPE_LABELS[item.type] ?? '其他'}</span>
-          <span style={{ fontSize: '11px', color: item.isActive ? '#81c784' : '#ffb74d' }}>{item.remaining}</span>
+          <span style={{ fontSize: '12px', color: '#d3bc8e' }}>{TYPE_LABELS[item.type] ?? '其他'}</span>
+          <span style={{ fontSize: '12px', color: item.isActive ? '#81c784' : '#ffb74d' }}>{item.remaining}</span>
         </div>
       </div>
-      <div
-        style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          background: item.isActive ? '#4caf50' : '#bdbdbd',
-          flexShrink: 0
-        }}
-      />
     </div>
   );
 }
@@ -74,79 +63,51 @@ interface Props {
 }
 
 export default function CalendarCard({ data }: Props) {
-  const accent = GAME_ACCENT[data.game] ?? GAME_ACCENT.gs;
-
   const activeItems = data.activities.filter(a => a.isActive);
   const upcomingItems = data.activities.filter(a => !a.isActive);
 
   return (
-    <HTML style={{ width: '520px' }}>
+    <HTML style={{ width: '550px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '550px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '300px'
+          fontSize: '16px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            padding: '20px 24px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
+            width: '550px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
-          <span style={{ fontSize: '28px' }}>📅</span>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span
+          {/* head-box */}
+          <div style={{ borderRadius: '15px', padding: '10px 20px', color: '#fff', marginTop: '10px' }}>
+            <div
               style={{
-                fontSize: '22px',
-                fontWeight: 'bold',
-                color: '#fff',
-                textShadow: '0 0 6px rgba(255,255,255,0.3)'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
               }}
             >
               {data.gameName}日历
-            </span>
-            <span style={{ fontSize: '12px', color: '#999', marginTop: '2px' }}>{data.now}</span>
+            </div>
+            <div style={{ fontSize: '14px', textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)' }}>{data.now}</div>
           </div>
-        </div>
 
-        {/* 主体 */}
-        <div style={{ padding: '14px 24px' }}>
           {/* 进行中 */}
           {activeItems.length > 0 && (
-            <div style={{ marginBottom: '16px' }}>
-              <div
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                  color: accent,
-                  marginBottom: '8px',
-                  paddingBottom: '4px',
-                  borderBottom: `1px solid ${accent}33`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <span
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    background: '#4caf50',
-                    display: 'inline-block'
-                  }}
-                />
-                进行中 ({activeItems.length})
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={contStyle()}>
+              <div style={contTitleStyle()}>进行中 ({activeItems.length})</div>
+              <div style={{ padding: '8px 10px' }}>
                 {activeItems.map(item => (
                   <ActivityItem key={item.id} item={item} />
                 ))}
@@ -156,32 +117,9 @@ export default function CalendarCard({ data }: Props) {
 
           {/* 即将开始 */}
           {upcomingItems.length > 0 && (
-            <div>
-              <div
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                  color: accent,
-                  marginBottom: '8px',
-                  paddingBottom: '4px',
-                  borderBottom: `1px solid ${accent}33`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <span
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    background: '#ff9800',
-                    display: 'inline-block'
-                  }}
-                />
-                即将开始 ({upcomingItems.length})
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={contStyle()}>
+              <div style={contTitleStyle()}>即将开始 ({upcomingItems.length})</div>
+              <div style={{ padding: '8px 10px' }}>
                 {upcomingItems.map(item => (
                   <ActivityItem key={item.id} item={item} />
                 ))}
@@ -190,30 +128,28 @@ export default function CalendarCard({ data }: Props) {
           )}
 
           {data.activities.length === 0 && (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '40px 0',
-                color: '#666',
-                fontSize: '14px'
-              }}
-            >
-              暂无活动数据
+            <div style={contStyle()}>
+              <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: '#fff', fontSize: '14px' }}>暂无活动数据</div>
             </div>
           )}
-        </div>
 
-        {/* 底部 */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            fontSize: '11px',
-            color: '#777',
-            textAlign: 'center'
-          }}
-        >
-          数据来自米游社公告 · {data.now}
+          <div
+            style={{
+              display: 'flex',
+              background: 'rgba(0,0,0,0.4)',
+              width: '100%',
+              padding: '10px 15px',
+              fontSize: '12px',
+              color: '#fff',
+              borderRadius: '0 0 10px 10px',
+              margin: '5px 10px'
+            }}
+          >
+            <span style={{ width: '50%' }}>数据来自米游社公告</span>
+            <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
+          </div>
+
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
         </div>
       </div>
     </HTML>

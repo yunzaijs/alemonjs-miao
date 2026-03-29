@@ -1,4 +1,6 @@
 import URL_SCSS from '@src/assets/css/input.scss';
+import URL_HYWH from '@src/assets/font/HYWH-65W.ttf';
+import URL_NZBZ from '@src/assets/font/NZBZ.ttf';
 import URL_TTT from '@src/assets/font/tttgbnumber.ttf';
 import classNames from 'classnames';
 import React from 'react';
@@ -20,9 +22,21 @@ const HTML = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLBodyElemen
                 font-weight: normal; 
                 font-style: normal; 
               }
+              @font-face {
+                font-family: 'NZBZ';
+                src: url('${URL_NZBZ}');
+                font-weight: normal;
+                font-style: normal;
+              }
+              @font-face {
+                font-family: 'HYWH';
+                src: url('${URL_HYWH}');
+                font-weight: normal;
+                font-style: normal;
+              }
               body { 
-                font-family: 'tttgbnumber', 
-                system-ui, sans-serif; 
+                font-family: 'HYWH', 'tttgbnumber', 
+                'PingFang SC', system-ui, sans-serif; 
               }
             `
           }}

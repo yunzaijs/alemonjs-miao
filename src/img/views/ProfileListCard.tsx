@@ -1,10 +1,11 @@
 /**
- * 650px 宽度，紧凑角色网格，圆形头像 + 星级边框 + 命座角标
+ * 650px 宽度 — 背景图 + card-bg 面板 + 圆形头像 + 星级边框 + 命座角标
+ * 与老版 miao-plugin profile-list 对齐
  */
 import type { ProfileData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { CONS_COLORS, CONS_SUFFIX, DARK_BG, FONT_FAMILY, STAR_COLORS } from './shared.js';
+import { CONS_COLORS, CONS_SUFFIX, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle } from './shared.js';
 
 // ─── 单个角色项 ─────────────────────────────────────
 
@@ -16,65 +17,58 @@ function CharItem({ avatar, game }: { avatar: ProfileData['avatars'][0]; game: s
   return (
     <div
       style={{
-        width: '78px',
+        width: '75px',
+        margin: '5px 0',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative'
       }}
     >
-      {/* 头像 */}
+      {/* 头像 — 64px 圆形 + 星级边框 */}
       <div
         style={{
           width: '64px',
           height: '64px',
           borderRadius: '50%',
           border: `2px solid ${border}`,
-          boxShadow: '1px 1px 3px 0 rgba(0,0,0,0.5)',
+          boxShadow: '1px 1px 3px 0 #000',
           overflow: 'hidden',
-          position: 'relative'
+          margin: '0 5px 0 6px'
         }}
       >
         <img src={avatar.icon} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
       </div>
       {/* 名字 + 命座 */}
-      <div
+      <span
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '2px',
-          marginTop: '4px',
-          width: '100%'
+          marginTop: '5px',
+          display: 'block',
+          fontSize: '14px',
+          color: '#fff',
+          textAlign: 'center',
+          textShadow: '0 0 1px #000',
+          whiteSpace: 'nowrap'
         }}
       >
+        {avatar.abbr}
         <span
           style={{
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            padding: '1px 4px',
+            borderRadius: '4px',
             fontSize: '12px',
-            color: '#fff',
-            textShadow: '0 0 3px #000, 1px 1px 2px rgba(0,0,0,0.8)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '55px'
-          }}
-        >
-          {avatar.abbr}
-        </span>
-        <span
-          style={{
-            fontSize: '10px',
             background: consBg,
             color: '#fff',
-            borderRadius: '3px',
-            padding: '0 3px',
-            lineHeight: '14px',
-            flexShrink: 0
+            margin: '-2px 0 0 1px',
+            opacity: 0.9
           }}
         >
           {avatar.cons}
           {suffix}
         </span>
-      </div>
+      </span>
     </div>
   );
 }
@@ -90,94 +84,121 @@ export default function ProfileListCard({ data }: Props) {
     <HTML style={{ width: '650px' }}>
       <div
         style={{
-          padding: '0',
-          background: DARK_BG,
+          width: '650px',
           fontFamily: FONT_FAMILY,
-          fontSize: '14px',
-          color: '#eee',
-          minHeight: '300px'
+          fontSize: '18px',
+          color: '#1e1f20',
+          backgroundImage: `url(${URL_BG01})`,
+          backgroundSize: '100% auto',
+          backgroundPosition: 'left center'
         }}
       >
-        {/* 头部 */}
         <div
           style={{
-            padding: '20px 24px 14px',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            width: '650px',
+            padding: '20px 15px 10px 15px',
+            backgroundImage: `url(${URL_MAIN01})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center -25px'
           }}
         >
+          {/* head-box — NZBZ 标题 */}
           <div
             style={{
-              fontSize: '22px',
-              fontWeight: 'bold',
+              borderRadius: '15px',
+              padding: '10px 20px',
               color: '#fff',
-              textShadow: '0 0 6px rgba(255,255,255,0.3)'
+              marginTop: '10px'
             }}
           >
-            #面板列表
-            <span
-              style={{
-                fontSize: '13px',
-                color: '#aaa',
-                fontWeight: 'normal',
-                marginLeft: '12px'
-              }}
-            >
-              UID:{data.uid}
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: '12px',
-              color: '#999',
-              marginTop: '6px',
-              lineHeight: '1.6'
-            }}
-          >
-            你可以使用 <span style={{ color: '#e8d5b0' }}>#{demo}面板</span>、<span style={{ color: '#e8d5b0' }}>#{demo}伤害</span>、
-            <span style={{ color: '#e8d5b0' }}>#{demo}圣遗物</span> 命令来查看面板信息了
-          </div>
-        </div>
-
-        {/* 角色网格 */}
-        <div
-          style={{
-            padding: '14px 20px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '10px 0'
-          }}
-        >
-          {data.avatars.length > 0 ? (
-            data.avatars.map(av => <CharItem key={av.id} avatar={av} game={data.game} />)
-          ) : (
             <div
               style={{
-                width: '100%',
-                textAlign: 'center',
-                padding: '40px 0',
-                color: '#666',
-                fontSize: '14px'
+                fontFamily: FONT_NZBZ,
+                fontSize: '36px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
               }}
             >
-              暂无面板数据，请在游戏中展示角色后重试
+              #面板列表
+              <span
+                style={{
+                  display: 'inline-block',
+                  marginLeft: '10px',
+                  fontSize: '16px',
+                  fontFamily: FONT_FAMILY,
+                  textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
+                }}
+              >
+                UID:{data.uid}
+              </span>
             </div>
-          )}
-        </div>
+            <div
+              style={{
+                fontSize: '16px',
+                textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)'
+              }}
+            >
+              你可以使用<span style={{ color: '#d3bc8e', padding: '0 2px' }}>#{demo}面板</span>、
+              <span style={{ color: '#d3bc8e', padding: '0 2px' }}>#{demo}伤害</span>、<span style={{ color: '#d3bc8e', padding: '0 2px' }}>#{demo}圣遗物</span>
+              命令来查看面板信息了
+            </div>
+          </div>
 
-        {/* 底部 */}
-        <div
-          style={{
-            padding: '10px 24px 16px',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '11px',
-            color: '#777'
-          }}
-        >
-          <span>更新时间：{data.updateTime}</span>
-          <span>当前更新服务：{data.servName ?? (data.game === 'sr' ? 'Mihomo' : 'Enka')}</span>
+          {/* .cont 面板 — card-bg 背景 */}
+          <div style={contStyle()}>
+            {/* 角色网格 */}
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                padding: '10px'
+              }}
+            >
+              {data.avatars.length > 0 ? (
+                data.avatars.map(av => <CharItem key={av.id} avatar={av} game={data.game} />)
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    textAlign: 'center',
+                    padding: '40px 0',
+                    color: '#888',
+                    fontSize: '14px'
+                  }}
+                >
+                  暂无面板数据，请在游戏中展示角色后重试
+                </div>
+              )}
+            </div>
+
+            {/* cont-footer */}
+            <div
+              style={{
+                display: 'flex',
+                background: 'rgba(0,0,0,0.4)',
+                width: '100%',
+                padding: '10px 15px',
+                fontSize: '12px',
+                color: '#fff'
+              }}
+            >
+              <span style={{ width: '50%' }}>{data.updateTime ? `更新时间：${data.updateTime}` : ''}</span>
+              <span style={{ width: '50%', textAlign: 'right' }}>当前更新服务：{data.servName ?? (data.game === 'sr' ? 'Mihomo' : 'Enka')}</span>
+            </div>
+          </div>
+
+          {/* copyright */}
+          <div
+            style={{
+              fontSize: '14px',
+              textAlign: 'center',
+              color: '#fff',
+              textShadow: '1px 1px 1px #000',
+              margin: '10px 0'
+            }}
+          >
+            AlemonJS
+          </div>
         </div>
       </div>
     </HTML>

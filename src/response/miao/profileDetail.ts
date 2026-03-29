@@ -11,7 +11,7 @@ import { renderComponentIsHtmlToBuffer } from 'jsxp';
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
@@ -54,7 +54,11 @@ export default async (e: EventsEnum) => {
 
   let uid = uidMatch?.[1] ?? null;
 
+  logger.debug('[profileDetail] 进入', { userId, game, charName, uidFromMsg: uid });
+
   uid ??= await getUserMainUid(userId, game);
+
+  logger.debug('[profileDetail] uid', { uid });
 
   if (!uid) {
     const md = Format.createMarkdown();

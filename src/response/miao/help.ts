@@ -9,10 +9,12 @@ import { renderComponentIsHtmlToBuffer } from 'jsxp';
 export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
-    selects: ['message.create', 'private.message.create']
+    selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
   });
 
   const [message] = useMessage(event);
+
+  logger.debug('[help] 渲染帮助图片');
 
   const img = await renderComponentIsHtmlToBuffer(MiaoHelp, {});
 
