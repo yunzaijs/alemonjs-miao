@@ -30,4 +30,6 @@ export declare const miaoRouteRules: {
     readonly gameCard: RegExp;
     readonly version: RegExp;
     readonly admin: RegExp;
+    readonly atlas: RegExp;
+    readonly genShenMap: RegExp;
 };
