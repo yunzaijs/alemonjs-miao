@@ -6,6 +6,7 @@
 import { getCharacterFace, GS_FACE, SR_FACE } from '@src/assets/character/index.js';
 import AtlasCard, { type AtlasCardData } from '@src/img/views/AtlasCard';
 import { GS_CHARACTERS } from '@src/model/miao/characters.js';
+import { loadGsCharacter } from '@src/model/miao/gsData.js';
 import { loadSrCharacter, srElementIcon, srPathIcon, srStarIcon } from '@src/model/miao/srData.js';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
 import { renderComponentIsHtmlToBuffer } from 'jsxp';
@@ -69,6 +70,7 @@ export default async (e: EventsEnum, next: () => void) => {
   const gameLabel = game === 'sr' ? '星穹铁道' : '原神';
   const faceImg = getCharacterFace(game, name);
   const gsMeta = game === 'gs' ? findGsCharMeta(name) : null;
+  const gsData = game === 'gs' ? loadGsCharacter(name) : null;
   const srData = game === 'sr' ? loadSrCharacter(name) : null;
 
   logger.debug('[atlas] 图鉴查询', { name, game });
@@ -81,6 +83,7 @@ export default async (e: EventsEnum, next: () => void) => {
     rarity: gsMeta?.rarity ?? srData?.rarity,
     weaponType: gsMeta?.weaponType,
     faceImg,
+    gsData: gsData ?? undefined,
     srData: srData ?? undefined,
     elementIcon: srData ? srElementIcon(srData.element) : undefined,
     pathIcon: srData ? srPathIcon(srData.path) : undefined,

@@ -1,8 +1,9 @@
 /**
  * 图鉴卡片 — 对齐 cvs-plugin 效果
  * SR: 大尺寸，立绘 + 属性面板 + 技能列表 + 星魂 + 升级材料
- * GS: 角色头像 + 基础信息面板
+ * GS: 头像 + 属性面板 + 天赋 + 命座 + 固有天赋 + 材料
  */
+import type { GsCharacterData } from '@src/model/miao/gsData.js';
 import type { SrCharacterData } from '@src/model/miao/srData.js';
 import React from 'react';
 import HTML from './HTML.js';
@@ -20,6 +21,8 @@ export interface AtlasCardData {
   faceImg?: string;
   /** SR 角色完整数据（从 cvs-plugin JSON 加载） */
   srData?: SrCharacterData;
+  /** GS 角色完整数据（从 miao-plugin JSON 加载） */
+  gsData?: GsCharacterData;
   /** SR 元素图标 */
   elementIcon?: string;
   /** SR 命途图标 */
@@ -40,16 +43,6 @@ const RARITY_BAR: Record<number, string> = {
 // ─── 星魂颜色 ────────────────────────────────────────
 
 const EIDOLON_COLORS = ['#5cbac2', '#339d61', '#3e95b9', '#3955b7', '#531ba9', '#ff5722'];
-
-// ─── 武器类型图标 (GS only) ──────────────────────────
-
-const WEAPON_ICONS: Record<string, string> = {
-  单手剑: '🗡️',
-  双手剑: '⚔️',
-  长柄武器: '🔱',
-  弓: '🏹',
-  法器: '📖'
-};
 
 // ═══════════════════════════════════════════════════════
 // SR 图鉴卡片 — 对齐 cvs-plugin character/index.html
@@ -334,27 +327,81 @@ function SrAtlasCard({ data }: { data: AtlasCardData }) {
 }
 
 // ═══════════════════════════════════════════════════════
-// GS 图鉴卡片 — 原神角色图鉴（丰富版）
+// GS 图鉴卡片 — 原神角色图鉴（数据驱动）
 // ═══════════════════════════════════════════════════════
 
-/** 天赋类型描述 */
-const GS_TALENTS = [
-  { label: '普通攻击', icon: '⚔️', desc: '进行普通攻击与重击' },
-  { label: '元素战技', icon: '🔮', desc: '施放元素战技造成元素伤害' },
-  { label: '元素爆发', icon: '💫', desc: '施放元素爆发造成大量伤害' },
-  { label: '固有天赋 1', icon: '📜', desc: '角色解锁即拥有的被动天赋' },
-  { label: '固有天赋 2', icon: '📜', desc: '突破后解锁的被动天赋' }
-];
+/** 天赋类型图标 */
+const TALENT_ICONS: Record<string, string> = {
+  a: '⚔️',
+  e: '🔮',
+  q: '💫'
+};
 
-/** 命座结构 */
-const GS_CONS = ['第一重', '第二重', '第三重', '第四重', '第五重', '第六重'];
-const GS_CONS_ICONS = ['①', '②', '③', '④', '⑤', '⑥'];
+/** 命座颜色 */
 const GS_CONS_COLORS = ['#5cbac2', '#339d61', '#3e95b9', '#3955b7', '#531ba9', '#ff5722'];
 
+/** 元素中文映射 */
+const ELEM_CN: Record<string, string> = {
+  pyro: '火',
+  hydro: '水',
+  anemo: '风',
+  electro: '雷',
+  dendro: '草',
+  cryo: '冰',
+  geo: '岩'
+};
+
+/** 武器类型中文映射 */
+const WEAPON_CN: Record<string, string> = {
+  sword: '单手剑',
+  claymore: '双手剑',
+  polearm: '长柄武器',
+  bow: '弓',
+  catalyst: '法器'
+};
+
+/** 武器类型图标 */
+const WEAPON_ICONS: Record<string, string> = {
+  sword: '🗡️',
+  claymore: '⚔️',
+  polearm: '🔱',
+  bow: '🏹',
+  catalyst: '📖',
+  单手剑: '🗡️',
+  双手剑: '⚔️',
+  长柄武器: '🔱',
+  弓: '🏹',
+  法器: '📖'
+};
+
+/** 突破属性中文 */
+const GROW_ATTR_CN: Record<string, string> = {
+  cpct: '暴击率',
+  cdmg: '暴击伤害',
+  mastery: '元素精通',
+  recharge: '元素充能效率',
+  heal: '治疗加成',
+  hpPct: '生命值%',
+  atkPct: '攻击力%',
+  defPct: '防御力%',
+  dmg: '元素伤害加成',
+  phy: '物理伤害加成'
+};
+
+/** 去除 HTML 标签 */
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, '');
+}
+
 function GsAtlasCard({ data }: { data: AtlasCardData }) {
-  const elemColor = ELEMENT_COLORS[data.element ?? ''] ?? '#888';
-  const bgUrl = ELEM_BG[data.element ?? ''] ?? ELEM_BG['水'];
-  const rarityColor = RARITY_COLORS[data.rarity ?? 4] ?? '#c6923a';
+  const gs = data.gsData;
+  const elemKey = gs?.elem ?? data.element ?? '';
+  const elemColor = ELEMENT_COLORS[elemKey] ?? ELEMENT_COLORS[ELEM_CN[elemKey] ?? ''] ?? '#888';
+  const bgUrl = ELEM_BG[elemKey] ?? ELEM_BG[ELEM_CN[elemKey] ?? ''] ?? ELEM_BG['水'];
+  const star = gs?.star ?? data.rarity ?? 4;
+  const rarityColor = RARITY_COLORS[star] ?? '#c6923a';
+  const weaponCn = gs ? (WEAPON_CN[gs.weapon] ?? gs.weapon) : (data.weaponType ?? '');
+  const elemCn = ELEM_CN[elemKey] ?? elemKey;
 
   return (
     <HTML style={{ width: '800px' }}>
@@ -403,109 +450,234 @@ function GsAtlasCard({ data }: { data: AtlasCardData }) {
 
           {/* 右侧信息 */}
           <div style={{ flex: 1 }}>
+            {/* 名称 + 称号 */}
             <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px', color: '#d3bc8e', textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}>{data.name}</div>
+            {gs?.title && <div style={{ fontSize: '14px', color: '#ccc', marginTop: '2px', opacity: 0.8 }}>{gs.title}</div>}
 
             {/* 星级 */}
-            {data.rarity && (
-              <div style={{ display: 'flex', gap: '3px', marginTop: '6px' }}>
-                {Array.from({ length: data.rarity }).map((_, i) => (
-                  <span key={i} style={{ fontSize: '22px', color: rarityColor, textShadow: `0 0 6px ${rarityColor}` }}>
-                    ★
-                  </span>
-                ))}
+            <div style={{ display: 'flex', gap: '3px', marginTop: '6px' }}>
+              {Array.from({ length: star }).map((_, i) => (
+                <span key={i} style={{ fontSize: '22px', color: rarityColor, textShadow: `0 0 6px ${rarityColor}` }}>
+                  ★
+                </span>
+              ))}
+            </div>
+
+            {/* 元素 + 武器 + 所属标签 */}
+            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <span
+                style={{
+                  padding: '4px 16px',
+                  borderRadius: '14px',
+                  background: `${elemColor}90`,
+                  fontSize: '15px',
+                  fontWeight: 'bold',
+                  boxShadow: `0 0 8px ${elemColor}40`
+                }}
+              >
+                {elemCn}
+              </span>
+              <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(255,255,255,0.18)', fontSize: '15px' }}>
+                {WEAPON_ICONS[gs?.weapon ?? weaponCn] ?? ''} {weaponCn}
+              </span>
+              {gs?.allegiance && (
+                <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(232,213,176,0.25)', fontSize: '13px' }}>{gs.allegiance}</span>
+              )}
+            </div>
+
+            {/* 基础属性 */}
+            {gs && (
+              <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <GsAttrTag label='生命值' value={String(Math.round(gs.baseAttr.hp))} color='#5cbac2' />
+                <GsAttrTag label='攻击力' value={String(Math.round(gs.baseAttr.atk))} color='#ff5722' />
+                <GsAttrTag label='防御力' value={String(Math.round(gs.baseAttr.def))} color='#ffa726' />
+                <GsAttrTag label={GROW_ATTR_CN[gs.growAttr.key] ?? gs.growAttr.key} value={gs.growAttr.value + '%'} color='#ba98f8' />
               </div>
             )}
 
-            {/* 元素 + 武器类型标签 */}
-            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              {data.element && (
-                <span
+            {/* 简介 */}
+            {gs?.desc && (
+              <div style={{ marginTop: '10px', fontSize: '12px', color: '#ddd', opacity: 0.7, lineHeight: '1.5' }}>
+                {gs.desc.length > 80 ? gs.desc.slice(0, 80) + '...' : gs.desc}
+              </div>
+            )}
+
+            {/* 声优 */}
+            {gs && (gs.cncv || gs.jpcv) && (
+              <div style={{ marginTop: '6px', fontSize: '11px', color: '#bbb', opacity: 0.6 }}>
+                {gs.cncv && <span>CN: {gs.cncv}</span>}
+                {gs.cncv && gs.jpcv && <span style={{ margin: '0 8px' }}>|</span>}
+                {gs.jpcv && <span>JP: {gs.jpcv}</span>}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ═══ 升级材料 ═══ */}
+        {gs?.materials && (
+          <div style={{ margin: '0 20px 10px' }}>
+            <GsSectionTitle title='升级材料' />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px 0' }}>
+              {[
+                { label: '宝石', value: gs.materials.gem },
+                { label: 'Boss素材', value: gs.materials.boss },
+                { label: '特产', value: gs.materials.specialty },
+                { label: '普通素材', value: gs.materials.normal },
+                { label: '天赋素材', value: gs.materials.talent },
+                { label: '周本素材', value: gs.materials.weekly }
+              ]
+                .filter(m => m.value)
+                .map(m => (
+                  <div
+                    key={m.label}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 14px',
+                      background: 'rgba(0,0,0,0.2)',
+                      borderRadius: '8px',
+                      borderLeft: `3px solid ${elemColor}`,
+                      minWidth: '220px'
+                    }}
+                  >
+                    <span style={{ fontSize: '12px', opacity: 0.6, flexShrink: 0 }}>{m.label}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 'bold', marginLeft: 'auto' }}>{m.value}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ 角色天赋（普攻/E/Q） ═══ */}
+        {gs && gs.talents.length > 0 && (
+          <div style={{ margin: '0 20px 10px' }}>
+            <GsSectionTitle title='角色天赋' />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
+              {gs.talents.map(t => (
+                <div
+                  key={t.key}
                   style={{
-                    padding: '4px 16px',
-                    borderRadius: '14px',
-                    background: `${elemColor}90`,
-                    fontSize: '15px',
-                    fontWeight: 'bold',
-                    boxShadow: `0 0 8px ${elemColor}40`
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '12px 14px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    borderLeft: `3px solid ${elemColor}`
                   }}
                 >
-                  {data.element}
-                </span>
-              )}
-              {data.weaponType && (
-                <span
-                  style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(255,255,255,0.18)', fontSize: '15px', backdropFilter: 'blur(4px)' }}
-                >
-                  {WEAPON_ICONS[data.weaponType] ?? ''} {data.weaponType}
-                </span>
-              )}
-              <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(232,213,176,0.25)', fontSize: '13px' }}>原神</span>
-            </div>
-
-            {/* 基础属性行 */}
-            <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {data.element && <GsAttrTag label='元素' value={data.element} color={elemColor} />}
-              {data.rarity && <GsAttrTag label='稀有度' value={'★'.repeat(data.rarity)} color={rarityColor} />}
-              {data.weaponType && <GsAttrTag label='武器' value={data.weaponType} color='#aaa' />}
-            </div>
-          </div>
-        </div>
-
-        {/* ═══ 天赋 ═══ */}
-        <div style={{ margin: '0 20px 10px' }}>
-          <GsSectionTitle title='角色天赋' />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 0' }}>
-            {GS_TALENTS.map((t, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 14px',
-                  background: 'rgba(0,0,0,0.2)',
-                  borderRadius: '8px',
-                  borderLeft: `3px solid ${elemColor}`
-                }}
-              >
-                <span style={{ fontSize: '24px', flexShrink: 0, width: '32px', textAlign: 'center' }}>{t.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{t.label}</div>
-                  <div style={{ fontSize: '12px', opacity: 0.5, marginTop: '2px' }}>{t.desc}</div>
+                  <span style={{ fontSize: '24px', flexShrink: 0, width: '32px', textAlign: 'center', marginTop: '2px' }}>{TALENT_ICONS[t.key] ?? '📜'}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{t.name}</span>
+                      <span style={{ fontSize: '11px', padding: '1px 8px', borderRadius: '4px', background: `${elemColor}60` }}>
+                        {t.key === 'a' ? '普通攻击' : t.key === 'e' ? '元素战技' : '元素爆发'}
+                      </span>
+                    </div>
+                    {/* 天赋描述 */}
+                    {t.desc.length > 0 && (
+                      <div style={{ fontSize: '12px', color: '#ccc', marginTop: '4px', lineHeight: '1.5', opacity: 0.8 }}>
+                        {t.desc.map((d, i) => (
+                          <div key={i}>{stripHtml(d)}</div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 倍率名称列表 */}
+                    {t.tableNames.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px' }}>
+                        {t.tableNames.slice(0, 8).map(tn => (
+                          <span key={tn} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.1)' }}>
+                            {tn}
+                          </span>
+                        ))}
+                        {t.tableNames.length > 8 && <span style={{ fontSize: '11px', padding: '2px 8px', opacity: 0.5 }}>+{t.tableNames.length - 8}</span>}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* ═══ 固有天赋 ═══ */}
+        {gs && gs.passives.length > 0 && (
+          <div style={{ margin: '0 20px 10px' }}>
+            <GsSectionTitle title='固有天赋' />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
+              {gs.passives.map((p, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '10px 14px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid #d3bc8e'
+                  }}
+                >
+                  <span style={{ fontSize: '20px', flexShrink: 0, width: '28px', textAlign: 'center', marginTop: '2px' }}>📜</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{p.name}</div>
+                    <div style={{ fontSize: '12px', color: '#ccc', marginTop: '3px', lineHeight: '1.5', opacity: 0.8 }}>
+                      {p.desc.map((d, j) => (
+                        <div key={j}>{stripHtml(d)}</div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ═══ 命之座 ═══ */}
-        <div style={{ margin: '0 20px 10px' }}>
-          <GsSectionTitle title='命之座' />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 0' }}>
-            {GS_CONS.map((label, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '10px 14px',
-                  background: 'rgba(0,0,0,0.2)',
-                  borderRadius: '8px',
-                  borderLeft: `4px solid ${GS_CONS_COLORS[i]}`
-                }}
-              >
-                <span style={{ fontSize: '22px', fontWeight: 'bold', color: GS_CONS_COLORS[i], width: '28px', textAlign: 'center', flexShrink: 0 }}>
-                  {GS_CONS_ICONS[i]}
-                </span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{label}</div>
-                  <div style={{ fontSize: '12px', opacity: 0.5, marginTop: '2px' }}>命之座 · 第{i + 1}重</div>
+        {gs && gs.constellations.length > 0 && (
+          <div style={{ margin: '0 20px 10px' }}>
+            <GsSectionTitle title={`命之座 · ${gs.astro || '命之座'}`} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 0' }}>
+              {gs.constellations.map((c, i) => (
+                <div
+                  key={c.index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '10px 14px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    borderLeft: `4px solid ${GS_CONS_COLORS[i] ?? '#999'}`
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: GS_CONS_COLORS[i] ?? '#999',
+                      width: '28px',
+                      textAlign: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}
+                  >
+                    {c.index}
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.name}</div>
+                    <div style={{ fontSize: '12px', color: '#ccc', marginTop: '3px', lineHeight: '1.5', opacity: 0.8 }}>
+                      {c.desc.map((d, j) => (
+                        <div key={j}>{stripHtml(d)}</div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 底栏 */}
         <div style={{ textAlign: 'right', padding: '8px 24px 12px', fontSize: '12px', opacity: 0.4 }}>Miao By ALemonJS</div>
