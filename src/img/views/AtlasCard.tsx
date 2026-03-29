@@ -334,15 +334,30 @@ function SrAtlasCard({ data }: { data: AtlasCardData }) {
 }
 
 // ═══════════════════════════════════════════════════════
-// GS 图鉴卡片 — 原神角色基础信息
+// GS 图鉴卡片 — 原神角色图鉴（丰富版）
 // ═══════════════════════════════════════════════════════
+
+/** 天赋类型描述 */
+const GS_TALENTS = [
+  { label: '普通攻击', icon: '⚔️', desc: '进行普通攻击与重击' },
+  { label: '元素战技', icon: '🔮', desc: '施放元素战技造成元素伤害' },
+  { label: '元素爆发', icon: '💫', desc: '施放元素爆发造成大量伤害' },
+  { label: '固有天赋 1', icon: '📜', desc: '角色解锁即拥有的被动天赋' },
+  { label: '固有天赋 2', icon: '📜', desc: '突破后解锁的被动天赋' }
+];
+
+/** 命座结构 */
+const GS_CONS = ['第一重', '第二重', '第三重', '第四重', '第五重', '第六重'];
+const GS_CONS_ICONS = ['①', '②', '③', '④', '⑤', '⑥'];
+const GS_CONS_COLORS = ['#5cbac2', '#339d61', '#3e95b9', '#3955b7', '#531ba9', '#ff5722'];
 
 function GsAtlasCard({ data }: { data: AtlasCardData }) {
   const elemColor = ELEMENT_COLORS[data.element ?? ''] ?? '#888';
   const bgUrl = ELEM_BG[data.element ?? ''] ?? ELEM_BG['水'];
+  const rarityColor = RARITY_COLORS[data.rarity ?? 4] ?? '#c6923a';
 
   return (
-    <HTML style={{ width: '460px' }}>
+    <HTML style={{ width: '800px' }}>
       <div
         style={{
           fontFamily: FONT_FAMILY,
@@ -351,27 +366,28 @@ function GsAtlasCard({ data }: { data: AtlasCardData }) {
           backgroundSize: 'cover',
           backgroundPosition: 'left top',
           position: 'relative',
-          paddingBottom: '10px'
+          width: '800px'
         }}
       >
-        {/* 头部: 头像 + 信息 */}
+        {/* ═══ 顶部: 头像 + 角色信息面板 ═══ */}
         <div
           style={{
             position: 'relative',
-            padding: '20px',
+            padding: '30px',
             display: 'flex',
-            gap: '16px',
+            gap: '24px',
             alignItems: 'flex-start'
           }}
         >
+          {/* 角色头像 */}
           <div
             style={{
-              width: '120px',
-              height: '120px',
-              borderRadius: '12px',
+              width: '180px',
+              height: '180px',
+              borderRadius: '16px',
               overflow: 'hidden',
-              border: `3px solid ${elemColor}`,
-              boxShadow: `0 0 12px ${elemColor}40`,
+              border: `4px solid ${elemColor}`,
+              boxShadow: `0 0 20px ${elemColor}50, 0 4px 12px rgba(0,0,0,0.4)`,
               flexShrink: 0,
               background: 'rgba(0,0,0,0.3)'
             }}
@@ -379,105 +395,151 @@ function GsAtlasCard({ data }: { data: AtlasCardData }) {
             {data.faceImg ? (
               <img src={data.faceImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '40px',
-                  opacity: 0.3
-                }}
-              >
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', opacity: 0.3 }}>
                 ?
               </div>
             )}
           </div>
+
+          {/* 右侧信息 */}
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: FONT_NZBZ, fontSize: '28px', color: '#d3bc8e' }}>{data.name}</div>
-            <div
-              style={{
-                fontSize: '12px',
-                opacity: 0.6,
-                marginTop: '2px',
-                padding: '2px 8px',
-                background: 'rgba(232,213,176,0.3)',
-                borderRadius: '8px',
-                display: 'inline-block'
-              }}
-            >
-              原神
-            </div>
+            <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px', color: '#d3bc8e', textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}>{data.name}</div>
+
+            {/* 星级 */}
             {data.rarity && (
-              <div style={{ display: 'flex', gap: '2px', marginTop: '6px' }}>
+              <div style={{ display: 'flex', gap: '3px', marginTop: '6px' }}>
                 {Array.from({ length: data.rarity }).map((_, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      fontSize: '20px',
-                      color: RARITY_COLORS[data.rarity!] ?? '#c6923a',
-                      textShadow: `0 0 4px ${RARITY_COLORS[data.rarity!] ?? '#c6923a'}`
-                    }}
-                  >
+                  <span key={i} style={{ fontSize: '22px', color: rarityColor, textShadow: `0 0 6px ${rarityColor}` }}>
                     ★
                   </span>
                 ))}
               </div>
             )}
-            <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+
+            {/* 元素 + 武器类型标签 */}
+            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {data.element && (
-                <span style={{ padding: '3px 12px', borderRadius: '12px', background: `${elemColor}80`, fontSize: '14px', fontWeight: 'bold' }}>
+                <span
+                  style={{
+                    padding: '4px 16px',
+                    borderRadius: '14px',
+                    background: `${elemColor}90`,
+                    fontSize: '15px',
+                    fontWeight: 'bold',
+                    boxShadow: `0 0 8px ${elemColor}40`
+                  }}
+                >
                   {data.element}
                 </span>
               )}
               {data.weaponType && (
-                <span style={{ padding: '3px 12px', borderRadius: '12px', background: 'rgba(255,255,255,0.15)', fontSize: '14px' }}>
+                <span
+                  style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(255,255,255,0.18)', fontSize: '15px', backdropFilter: 'blur(4px)' }}
+                >
                   {WEAPON_ICONS[data.weaponType] ?? ''} {data.weaponType}
                 </span>
               )}
+              <span style={{ padding: '4px 16px', borderRadius: '14px', background: 'rgba(232,213,176,0.25)', fontSize: '13px' }}>原神</span>
+            </div>
+
+            {/* 基础属性行 */}
+            <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {data.element && <GsAttrTag label='元素' value={data.element} color={elemColor} />}
+              {data.rarity && <GsAttrTag label='稀有度' value={'★'.repeat(data.rarity)} color={rarityColor} />}
+              {data.weaponType && <GsAttrTag label='武器' value={data.weaponType} color='#aaa' />}
             </div>
           </div>
         </div>
 
-        {/* 信息区 */}
-        <div
-          style={{
-            margin: '0 15px 10px',
-            background: 'rgba(0,0,0,0.25)',
-            borderRadius: '10px',
-            overflow: 'hidden'
-          }}
-        >
-          <div style={{ background: 'rgba(0,0,0,0.4)', padding: '10px 20px', color: '#d3bc8e', fontFamily: FONT_NZBZ, fontSize: '16px' }}>角色图鉴</div>
-          <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {data.element && <GsInfoRow label='元素' value={data.element} />}
-            {data.rarity && <GsInfoRow label='稀有度' value={'★'.repeat(data.rarity)} />}
-            {data.weaponType && <GsInfoRow label='武器类型' value={data.weaponType} />}
-            <GsInfoRow label='所属游戏' value='原神' />
+        {/* ═══ 天赋 ═══ */}
+        <div style={{ margin: '0 20px 10px' }}>
+          <GsSectionTitle title='角色天赋' />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 0' }}>
+            {GS_TALENTS.map((t, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 14px',
+                  background: 'rgba(0,0,0,0.2)',
+                  borderRadius: '8px',
+                  borderLeft: `3px solid ${elemColor}`
+                }}
+              >
+                <span style={{ fontSize: '24px', flexShrink: 0, width: '32px', textAlign: 'center' }}>{t.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{t.label}</div>
+                  <div style={{ fontSize: '12px', opacity: 0.5, marginTop: '2px' }}>{t.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div style={{ textAlign: 'right', padding: '4px 20px 8px', fontSize: '12px', opacity: 0.4 }}>Miao By ALemonJS</div>
+        {/* ═══ 命之座 ═══ */}
+        <div style={{ margin: '0 20px 10px' }}>
+          <GsSectionTitle title='命之座' />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 0' }}>
+            {GS_CONS.map((label, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '10px 14px',
+                  background: 'rgba(0,0,0,0.2)',
+                  borderRadius: '8px',
+                  borderLeft: `4px solid ${GS_CONS_COLORS[i]}`
+                }}
+              >
+                <span style={{ fontSize: '22px', fontWeight: 'bold', color: GS_CONS_COLORS[i], width: '28px', textAlign: 'center', flexShrink: 0 }}>
+                  {GS_CONS_ICONS[i]}
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{label}</div>
+                  <div style={{ fontSize: '12px', opacity: 0.5, marginTop: '2px' }}>命之座 · 第{i + 1}重</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 底栏 */}
+        <div style={{ textAlign: 'right', padding: '8px 24px 12px', fontSize: '12px', opacity: 0.4 }}>Miao By ALemonJS</div>
       </div>
     </HTML>
   );
 }
 
-function GsInfoRow({ label, value }: { label: string; value: string }) {
+/** 属性标签 */
+function GsAttrTag({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div
       style={{
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '8px 16px',
-        background: 'rgba(0,0,0,0.15)',
-        borderRadius: '6px'
+        gap: '8px',
+        padding: '6px 14px',
+        background: 'rgba(0,0,0,0.25)',
+        borderRadius: '4px 16px 4px 4px',
+        borderLeft: `3px solid ${color}`,
+        minWidth: '160px'
       }}
     >
-      <span style={{ fontSize: '14px', opacity: 0.7 }}>{label}</span>
-      <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{value}</span>
+      <span style={{ fontSize: '13px', opacity: 0.6 }}>{label}</span>
+      <span style={{ fontSize: '14px', fontWeight: 'bold', marginLeft: 'auto' }}>{value}</span>
+    </div>
+  );
+}
+
+/** GS 分区标题 */
+function GsSectionTitle({ title }: { title: string }) {
+  return (
+    <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: '8px', padding: '10px 20px', boxShadow: '0 0 1px 0 rgba(255,255,255,0.3)' }}>
+      <span style={{ fontFamily: FONT_NZBZ, fontSize: '18px', color: '#d3bc8e' }}>{title}</span>
     </div>
   );
 }
