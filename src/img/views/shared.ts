@@ -52,6 +52,11 @@ export const ELEM_BG: Record<string, string> = {
   sr: URL_BG_SR
 };
 
+/** 解析元素背景 URL，缺省回退到 hydro */
+export function elemBgUrl(element?: string): string {
+  return (element && ELEM_BG[element]) ?? ELEM_BG.hydro;
+}
+
 // ─── 元素颜色 ────────────────────────────────────────
 
 export const ELEMENT_COLORS: Record<string, string> = {

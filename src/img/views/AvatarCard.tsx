@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { CONS_COLORS, FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
+import { CONS_COLORS, FONT_FAMILY, FONT_NZBZ, RARITY_COLORS, contStyle, contTitleStyle, elemBgUrl } from './shared.js';
 
 // ─── 数据类型 ────────────────────────────────────────
 
@@ -160,7 +160,7 @@ function SingleAvatarCard({ avatar, relation, uid }: { avatar: AvatarInfo; relat
           fontSize: '12px'
         }}
       >
-        AlemonJS · Miao-Plugin
+        AlemonJS · Miao By ALemonJS
       </div>
     </div>
   );
@@ -263,10 +263,9 @@ export default function AvatarCard({ data }: { data: AvatarCardData }) {
   /* 单角色模式：老 character-card 风格，全身像做背景 */
   if (isSingle && data.avatar) {
     return (
-      <HTML>
+      <HTML style={{ width: '600px' }}>
         <div
           style={{
-            width: '600px',
             fontFamily: FONT_FAMILY,
             color: '#fff',
             backgroundColor: '#1234'
@@ -280,32 +279,18 @@ export default function AvatarCard({ data }: { data: AvatarCardData }) {
 
   /* 多角色列表模式 */
   return (
-    <HTML>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '600px',
           fontFamily: FONT_FAMILY,
           color: '#fff',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl(data.avatars?.[0]?.element)})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'left top',
           position: 'relative',
           paddingBottom: '10px'
         }}
       >
-        <img
-          src={URL_MAIN01}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            pointerEvents: 'none'
-          }}
-        />
-
         {/* 标题栏 */}
         <div
           style={{
@@ -356,7 +341,7 @@ export default function AvatarCard({ data }: { data: AvatarCardData }) {
             opacity: 0.4
           }}
         >
-          Created by Miao-Plugin · {formatDateZh()}
+          Miao By ALemonJS
         </div>
       </div>
     </HTML>

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, contStyle, contTitleStyle, elemBgUrl } from './shared.js';
 
 // ─── 静态素材日程数据 ─────────────────────────────────
 // week: 1=周一/四, 2=周二/五, 3=周三/六, 0=周日(全部)
@@ -234,33 +234,18 @@ export default function MaterialCard({ data }: { data: MaterialCardData }) {
   const groups = groupByRegion(talents, weapons);
 
   return (
-    <HTML>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '600px',
           fontFamily: FONT_FAMILY,
           color: '#fff',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl()})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'left top',
           position: 'relative',
           paddingBottom: '10px'
         }}
       >
-        {/* 遮罩 */}
-        <img
-          src={URL_MAIN01}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            pointerEvents: 'none'
-          }}
-        />
-
         {/* 标题栏 */}
         <div
           style={{
@@ -297,7 +282,7 @@ export default function MaterialCard({ data }: { data: MaterialCardData }) {
             opacity: 0.4
           }}
         >
-          Created by Miao-Plugin · {formatDateZh()}
+          Miao By ALemonJS
         </div>
       </div>
     </HTML>

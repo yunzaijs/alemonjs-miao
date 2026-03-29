@@ -4,7 +4,7 @@
 import type { GachaAnalysis } from '@src/model/miao/gachaLog.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_ITEM_BG5, URL_MAIN01, contStyle, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, URL_ITEM_BG5, contStyle, elemBgUrl } from './shared.js';
 
 export interface GachaDetailCardData {
   uid: string;
@@ -51,21 +51,18 @@ export default function GachaDetailCard({ data }: { data: GachaDetailCardData })
   const yearGroups = groupByYear(analysis.fiveStarList);
 
   return (
-    <HTML>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '600px',
           fontFamily: FONT_FAMILY,
           color: '#fff',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl()})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'left top',
           position: 'relative',
           paddingBottom: '10px'
         }}
       >
-        <img src={URL_MAIN01} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
-
         {/* 标题区 — 对齐老版 user-banner */}
         <div style={{ position: 'relative', padding: '20px 20px 10px' }}>
           <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px' }}>#{analysis.gachaTypeName}</div>
@@ -233,7 +230,7 @@ export default function GachaDetailCard({ data }: { data: GachaDetailCardData })
         )}
 
         <div style={{ position: 'relative', textAlign: 'center', padding: '12px 20px', fontSize: '16px', color: '#fff', textShadow: '1px 1px 1px #000' }}>
-          Created by Miao-Plugin · {formatDateZh()}
+          Miao By ALemonJS
         </div>
       </div>
     </HTML>

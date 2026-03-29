@@ -5,7 +5,7 @@ import { scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_CROWN, URL_MAIN01, contStyle, contTitleStyle, formatDateZh } from './shared.js';
+import { ELEMENT_COLORS, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_CROWN, contStyle, contTitleStyle, elemBgUrl, formatDateZh } from './shared.js';
 
 // ─── 主组件 ──────────────────────────────────────────
 
@@ -58,19 +58,15 @@ export default function GroupTopCard({ data }: Props) {
           fontFamily: FONT_FAMILY,
           fontSize: '16px',
           color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl(avatar.element)})`,
           backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          backgroundPosition: 'left top'
         }}
       >
         <div
           style={{
             width: '550px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            padding: '20px 15px 10px 15px'
           }}
         >
           {/* head-box */}
@@ -189,7 +185,7 @@ export default function GroupTopCard({ data }: Props) {
             <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
           </div>
 
-          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}>Miao By ALemonJS</div>
         </div>
       </div>
     </HTML>

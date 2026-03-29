@@ -5,7 +5,7 @@ import { scoreCharacterArtifacts } from '@src/model/miao/artisMark.js';
 import type { ProfileAvatar } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, STAR_COLORS, contStyle, elemBgUrl, formatDateZh } from './shared.js';
 
 // ─── 颜色常量 ────────────────────────────────────────
 
@@ -154,6 +154,8 @@ export default function ArtifactListCard({ data }: Props) {
     .map(av => ({ av, score: scoreCharacterArtifacts(av) }))
     .sort((a, b) => b.score.totalMark - a.score.totalMark);
 
+  const bgUrl = elemBgUrl(avatars[0]?.element);
+
   return (
     <HTML style={{ width: '660px' }}>
       <div
@@ -162,19 +164,15 @@ export default function ArtifactListCard({ data }: Props) {
           fontFamily: FONT_FAMILY,
           fontSize: '18px',
           color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${bgUrl})`,
           backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          backgroundPosition: 'left top'
         }}
       >
         <div
           style={{
             width: '660px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            padding: '20px 15px 10px 15px'
           }}
         >
           {/* head-box */}
@@ -230,7 +228,7 @@ export default function ArtifactListCard({ data }: Props) {
             </div>
           </div>
 
-          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}>Miao By ALemonJS</div>
         </div>
       </div>
     </HTML>

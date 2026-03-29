@@ -432,7 +432,7 @@ export default function ProfileDetailCard({ data }: Props) {
               margin: '10px 0'
             }}
           >
-            AlemonJS
+            Miao By ALemonJS
           </div>
         </div>
       </div>

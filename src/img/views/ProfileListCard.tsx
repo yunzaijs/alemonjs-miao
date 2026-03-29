@@ -1,11 +1,10 @@
 /**
  * 650px 宽度 — 背景图 + card-bg 面板 + 圆形头像 + 星级边框 + 命座角标
- * 与老版 miao-plugin profile-list 对齐
  */
 import type { ProfileData } from '@src/model/miao/enka.js';
 import React from 'react';
 import HTML from './HTML.js';
-import { CONS_COLORS, CONS_SUFFIX, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, URL_BG01, URL_MAIN01, contStyle } from './shared.js';
+import { CONS_COLORS, CONS_SUFFIX, FONT_FAMILY, FONT_NZBZ, STAR_COLORS, contStyle, elemBgUrl } from './shared.js';
 
 // ─── 单个角色项 ─────────────────────────────────────
 
@@ -79,6 +78,7 @@ interface Props {
 
 export default function ProfileListCard({ data }: Props) {
   const demo = data.avatars[0]?.abbr ?? '雷神';
+  const bgUrl = elemBgUrl(data.avatars[0]?.element);
 
   return (
     <HTML style={{ width: '650px' }}>
@@ -88,19 +88,15 @@ export default function ProfileListCard({ data }: Props) {
           fontFamily: FONT_FAMILY,
           fontSize: '18px',
           color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${bgUrl})`,
           backgroundSize: '100% auto',
-          backgroundPosition: 'left center'
+          backgroundPosition: 'left top'
         }}
       >
         <div
           style={{
             width: '650px',
-            padding: '20px 15px 10px 15px',
-            backgroundImage: `url(${URL_MAIN01})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center -25px'
+            padding: '20px 15px 10px 15px'
           }}
         >
           {/* head-box — NZBZ 标题 */}
@@ -197,7 +193,7 @@ export default function ProfileListCard({ data }: Props) {
               margin: '10px 0'
             }}
           >
-            AlemonJS
+            Miao By ALemonJS
           </div>
         </div>
       </div>

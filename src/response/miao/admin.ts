@@ -2,7 +2,9 @@
  * 管理员设置 — 喵喵插件设置与资源管理
  * 命令: #喵喵设置 / #喵喵更新 / #喵喵更新攻略资源 / #喵喵api
  */
+import AdminSettingsCard, { type AdminSettingsData } from '@src/img/views/AdminSettingsCard';
 import { createEvent, EventsEnum, Format, useMessage } from 'alemonjs';
+import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 type AdminAction = 'config' | 'updatePlugin' | 'updateRes' | 'updateImage' | 'apiInfo' | 'bgHelp' | 'updateLog';
 
@@ -52,6 +54,21 @@ function parseAdminAction(text: string): { action: AdminAction; params: Record<s
   return { action: 'config', params: {} };
 }
 
+/** 映射设置类型关键词 */
+function mapCfgType(raw: string): string {
+  if (/面板|profile/.test(raw)) {
+    return 'profile';
+  }
+  if (/排行|rank/.test(raw)) {
+    return 'rank';
+  }
+  if (/系统|sys/.test(raw)) {
+    return 'sys';
+  }
+
+  return '';
+}
+
 const BG_HELP_TEXT = [
   '【#喵喵背景设置帮助】',
   '#喵喵背景设置模式[0-4] — 设置默认背景模式',
@@ -62,7 +79,9 @@ const BG_HELP_TEXT = [
   '#喵喵背景设置面板模糊[0-50] — 设置面板背景图模糊度'
 ].join('\n');
 
-export default (e: EventsEnum) => {
+const UPDATE_LOG = ['【Miao AlemonJS 更新日志】', '', 'v0.0.1 — 初始版本', '· 全部卡片适配 AlemonJS + jsxp 渲染'].join('\n');
+
+export default async (e: EventsEnum) => {
   const event = createEvent({
     event: e,
     selects: ['private.message.create', 'message.create', 'interaction.create', 'private.interaction.create']
@@ -76,6 +95,7 @@ export default (e: EventsEnum) => {
 
   logger.debug('[admin] 进入', { userId, action, params });
 
+  // 背景帮助 — 文本
   if (action === 'bgHelp') {
     const format = Format.create();
     const md = Format.createMarkdown();
@@ -87,10 +107,51 @@ export default (e: EventsEnum) => {
     return;
   }
 
+  // 更新日志 — 文本
+  if (action === 'updateLog') {
+    const format = Format.create();
+    const md = Format.createMarkdown();
+
+    md.addText(UPDATE_LOG);
+    format.addMarkdown(md);
+    void message.send({ format });
+
+    return;
+  }
+
+  // 设置 — 图片卡片
+  if (action === 'config') {
+    const cfgType = mapCfgType(params.type ?? '');
+    const cardData: AdminSettingsData = { type: cfgType };
+    const img = await renderComponentIsHtmlToBuffer(AdminSettingsCard, { data: cardData });
+    const format = Format.create();
+
+    if (typeof img === 'boolean') {
+      const md = Format.createMarkdown();
+
+      md.addText('[设置] 图片渲染失败');
+      format.addMarkdown(md);
+    } else {
+      format.addImage(img);
+    }
+
+    void message.send({ format });
+
+    return;
+  }
+
+  // 其他管理操作 — 文本提示
+  const actionLabels: Record<string, string> = {
+    updatePlugin: '插件更新功能暂未实现',
+    updateRes: '资源更新功能暂未实现',
+    updateImage: '图像更新功能暂未实现',
+    apiInfo: 'API信息功能暂未实现'
+  };
+
   const format = Format.create();
   const md = Format.createMarkdown();
 
-  md.addText('[管理] 管理功能暂未实现');
+  md.addText(`[管理] ${actionLabels[action] ?? '未知操作'}`);
   format.addMarkdown(md);
   void message.send({ format });
 };

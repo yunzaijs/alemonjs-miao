@@ -11,7 +11,8 @@ import { FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_MAIN01 } from './shared.js';
 /** 对齐老版 default 主题配色 */
 const STYLE = {
   fontColor: '#ceb78b',
-  descColor: '#eee',
+  descColor: '#eee80',
+  headerColor: '#00008e',
   contBg: 'rgba(6, 21, 31, .5)',
   contBgBlur: 3,
   headerBg: 'rgba(6, 21, 31, .4)',
@@ -178,7 +179,7 @@ export default function MiaoHelp() {
           }}
         >
           {/* 标题区 — 对齐老版 head-box */}
-          <div style={{ margin: '60px 0 0 0', paddingBottom: '0', padding: '0 30px' }}>
+          <div style={{ paddingBottom: '0', padding: '0 30px' }}>
             <div
               style={{
                 fontSize: '50px',
@@ -194,12 +195,12 @@ export default function MiaoHelp() {
             <div
               style={{
                 fontSize: '16px',
-                color: STYLE.descColor,
+                color: STYLE.headerColor,
                 marginTop: '4px',
                 opacity: 0.8
               }}
             >
-              AlemonJS & Miao-Plugin
+              AlemonJS & Miao By ALemonJS
             </div>
           </div>
 

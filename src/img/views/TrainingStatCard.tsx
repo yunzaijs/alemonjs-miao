@@ -296,7 +296,7 @@ export default function TrainingStatCard({ data }: Props) {
             <span style={{ width: '50%', textAlign: 'right' }}>{formatDateZh()}</span>
           </div>
 
-          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}>Miao By ALemonJS</div>
         </div>
       </div>
     </HTML>

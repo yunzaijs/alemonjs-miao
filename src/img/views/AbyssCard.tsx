@@ -307,6 +307,10 @@ export default function AbyssCard({ data }: { data: AbyssData }) {
             <div>角色装备与圣遗物为当前最新状态</div>
           </div>
         </div>
+
+        <div style={{ position: 'relative', textAlign: 'center', padding: '12px 20px', fontSize: '16px', color: '#fff', textShadow: '1px 1px 1px #000' }}>
+          Miao By ALemonJS
+        </div>
       </div>
     </HTML>
   );

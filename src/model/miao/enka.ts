@@ -2,8 +2,6 @@
  * Enka Network / Mihomo API 适配器
  * 原神: https://enka.network/api/uid/{uid}
  * 星铁: https://api.mihomo.me/sr_info/{uid}
- *
- * 一比一复刻 miao-plugin 面板数据结构
  */
 import { getCharacterFace } from '@src/assets/character/index.js';
 import { FIGHT_PROP_MAP, getCharacterMeta } from './characters';

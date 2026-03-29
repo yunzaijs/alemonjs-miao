@@ -237,7 +237,7 @@ export default function RoleCombatCard({ data }: { data: RoleCombatData }) {
             </div>
           </div>
 
-          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}> AlemonJS</div>
+          <div style={{ fontSize: '14px', textAlign: 'center', color: '#fff', textShadow: '1px 1px 1px #000', margin: '10px 0' }}>Miao By ALemonJS</div>
         </div>
       </div>
     </HTML>

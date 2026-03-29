@@ -119,7 +119,40 @@ export default defineRouter([
         regular: miaoRouteRules.profileImgManage,
         handler: lazy(() => import('@src/response/miao/profileImgManage'))
       },
-      // ─── 管理员设置 ───────────────────────────────
+      // ─── 武器列表 ─────────────────────────────────
+      {
+        regular: miaoRouteRules.weapon,
+        handler: lazy(() => import('@src/response/miao/weapon'))
+      }, // ─── 武器图鉴 ─────────────────────────────────────
+      {
+        regular: miaoRouteRules.weaponWiki,
+        handler: lazy(() => import('@src/response/miao/weaponWiki'))
+      },
+      // ─── 角色素材 ─────────────────────────────────────
+      {
+        regular: miaoRouteRules.charMaterial,
+        handler: lazy(() => import('@src/response/miao/charMaterial'))
+      },
+      // ─── 角色圣遗物评分 ──────────────────────────────
+      {
+        regular: miaoRouteRules.charArtis,
+        handler: lazy(() => import('@src/response/miao/charArtis'))
+      },
+      // ─── 月谕圣牌 / 幻想卡片 ─────────────────────────
+      {
+        regular: miaoRouteRules.roleCard,
+        handler: lazy(() => import('@src/response/miao/roleCard'))
+      },
+      // ─── 卡片 ─────────────────────────────────────
+      {
+        regular: miaoRouteRules.gameCard,
+        handler: lazy(() => import('@src/response/miao/showUid'))
+      },
+      // ─── 版本信息 ─────────────────────────────────────
+      {
+        regular: miaoRouteRules.version,
+        handler: lazy(() => import('@src/response/miao/version'))
+      }, // ─── 管理员设置 ───────────────────────────────
       {
         regular: miaoRouteRules.admin,
         handler: lazy(() => import('@src/response/miao/admin'))

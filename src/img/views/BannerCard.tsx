@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import HTML from './HTML.js';
-import { FONT_FAMILY, FONT_NZBZ, URL_BG01, URL_ITEM_BG4, URL_ITEM_BG5, URL_MAIN01, formatDateZh } from './shared.js';
+import { FONT_FAMILY, FONT_NZBZ, URL_ITEM_BG4, URL_ITEM_BG5, elemBgUrl } from './shared.js';
 
 // ─── 数据类型 ────────────────────────────────────────
 
@@ -46,22 +46,19 @@ function SingleBannerCard({ data }: { data: BannerSingleData }) {
   const daysDiff = data.records.length > 0 ? data.records[0].daysSince : 0;
 
   return (
-    <HTML>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '600px',
           fontFamily: FONT_FAMILY,
           color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl(data.element)})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'left center',
+          backgroundPosition: 'left top',
           backgroundColor: '#3b4251',
           position: 'relative',
           paddingBottom: '10px'
         }}
       >
-        <img src={URL_MAIN01} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
-
         {/* 标题 — 对齐老版 head-box */}
         <div style={{ position: 'relative', margin: '20px 0', padding: '0 20px', color: '#fff', textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)' }}>
           <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px' }}>#{data.charName}复刻统计</div>
@@ -150,7 +147,7 @@ function SingleBannerCard({ data }: { data: BannerSingleData }) {
         </div>
 
         <div style={{ position: 'relative', textAlign: 'center', padding: '12px 20px', fontSize: '16px', color: '#fff', textShadow: '1px 1px 1px #000' }}>
-          Created by Miao-Plugin · {formatDateZh()}
+          Miao By ALemonJS
         </div>
       </div>
     </HTML>
@@ -161,22 +158,19 @@ function SingleBannerCard({ data }: { data: BannerSingleData }) {
 
 function AllBannerCard({ data }: { data: BannerAllData }) {
   return (
-    <HTML>
+    <HTML style={{ width: '600px' }}>
       <div
         style={{
-          width: '600px',
           fontFamily: FONT_FAMILY,
           color: '#1e1f20',
-          backgroundImage: `url(${URL_BG01})`,
+          backgroundImage: `url(${elemBgUrl()})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'left center',
+          backgroundPosition: 'left top',
           backgroundColor: '#3b4251',
           position: 'relative',
           paddingBottom: '10px'
         }}
       >
-        <img src={URL_MAIN01} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
-
         {/* 标题 */}
         <div style={{ position: 'relative', margin: '20px 0', padding: '0 20px', color: '#fff', textShadow: '0 0 1px #000, 1px 1px 3px rgba(0,0,0,0.9)' }}>
           <div style={{ fontFamily: FONT_NZBZ, fontSize: '36px' }}>#五星角色复刻统计</div>
@@ -268,7 +262,7 @@ function AllBannerCard({ data }: { data: BannerAllData }) {
         </div>
 
         <div style={{ position: 'relative', textAlign: 'center', padding: '12px 20px', fontSize: '16px', color: '#fff', textShadow: '1px 1px 1px #000' }}>
-          Created by Miao-Plugin · {formatDateZh()}
+          Miao By ALemonJS
         </div>
       </div>
     </HTML>
