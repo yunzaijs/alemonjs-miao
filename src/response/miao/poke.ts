@@ -8,6 +8,7 @@ import { getUserMainUid, queryMihoyoApi } from 'alemonjs-mhy';
 import { renderComponentIsHtmlToBuffer } from 'jsxp';
 
 export default async (e: EventsEnum) => {
+  e.MessageText = e.MessageText ?? '';
   const event = createEvent({
     event: e,
     selects: ['notice.create', 'private.notice.create']

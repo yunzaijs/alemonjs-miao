@@ -6,6 +6,7 @@ import { resolveGame } from 'alemonjs-mhy';
  * 从 mhy 模块引入 resolveGame，挂载 e.miao 上下文供子路由使用
  */
 export default (e: EventsEnum) => {
+  e.MessageText = e.MessageText ?? '';
   const text = e.MessageText ?? '';
 
   logger.debug('[miao:mw] 收到消息', {
