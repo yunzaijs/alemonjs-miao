@@ -1,14 +1,16 @@
 # 阿柠檬-喵喵
-
-必要环境 `nodejs` 、`redis` 、`chrome`
-
-该扩展推荐使用`alemongo`或`alemondesk`作为生产环境
+ 
+`alemonx` https://github.com/lemonade-lab/alemonx/releases
 
 `alemongo` https://github.com/lemonade-lab/alemongo
 
 `alemondesk` https://github.com/lemonade-lab/alemondesk
 
 > 该包强制依赖 alemonjs-mhy
+
+```bash
+yarn add alemonjs-mhy
+```
 
 ### alemongo/alemondesk
 
